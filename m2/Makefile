@@ -1,5 +1,6 @@
 complete: kernel
 	dd if=kernel of=floppya.img bs=512 conv=notrunc seek=3
+	dd if=message.txt of=floppya.img bs=512 count=1 seek=30 conv=notrunc
 
 run: complete
 	bochs -f opsys.bxrc

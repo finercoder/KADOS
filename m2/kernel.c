@@ -12,7 +12,7 @@ int main() {
   readSector(buffer, 30);
   printString(buffer);
 
-  makeInterrupt21();
+  // makeInterrupt21();
   interrupt(0x21, 1, line, 0, 0);
   interrupt(0x21, 0, line, 0, 0);
 

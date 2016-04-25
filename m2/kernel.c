@@ -52,7 +52,7 @@ void readString(char stringArr[]) {
   /* Set storage terminating character */
   storage[1] = '\0';
 
-  while (index < 80) {
+  while (index < 513) {
     /* Get input */
     stringArr[index] = interrupt(0x16, 0, 0, 0, 0);
     storage[0] = stringArr[index];

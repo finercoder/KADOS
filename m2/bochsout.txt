@@ -30,59 +30,59 @@
 00000000000i[     ]   SB16 support: yes
 00000000000i[     ]   USB support: yes
 00000000000i[     ]   VGA extension support: vbe 
-00000000000i[MEM0 ] allocated memory at 0x2b8f5b0c2010. after alignment, vector=0x2b8f5b0c3000
+00000000000i[MEM0 ] allocated memory at 0x2b8c16556010. after alignment, vector=0x2b8c16557000
 00000000000i[MEM0 ] 32.00MB
 00000000000i[MEM0 ] mem block size = 0x00100000, blocks=32
 00000000000i[MEM0 ] rom at 0xfffe0000/131072 ('/usr/share/bochs/BIOS-bochs-latest')
 00000000000i[MEM0 ] rom at 0xc0000/41472 ('/usr/share/bochs/VGABIOS-lgpl-latest')
-00000000000i[     ] lt_dlhandle is 0x3b80370
+00000000000i[     ] lt_dlhandle is 0x22ba9c0
 00000000000i[PLGIN] loaded plugin libbx_cmos.so
-00000000000i[     ] lt_dlhandle is 0x3b80d90
+00000000000i[     ] lt_dlhandle is 0x22bb3e0
 00000000000i[PLGIN] loaded plugin libbx_dma.so
-00000000000i[     ] lt_dlhandle is 0x3b817f0
+00000000000i[     ] lt_dlhandle is 0x22bbe40
 00000000000i[PLGIN] loaded plugin libbx_pic.so
-00000000000i[     ] lt_dlhandle is 0x3b82030
+00000000000i[     ] lt_dlhandle is 0x22bc680
 00000000000i[PLGIN] loaded plugin libbx_pit.so
-00000000000i[     ] lt_dlhandle is 0x3b829a0
+00000000000i[     ] lt_dlhandle is 0x22bcff0
 00000000000i[PLGIN] loaded plugin libbx_vga.so
-00000000000i[     ] lt_dlhandle is 0x3b83100
+00000000000i[     ] lt_dlhandle is 0x22bd750
 00000000000i[PLGIN] loaded plugin libbx_hdimage.so
-00000000000i[     ] lt_dlhandle is 0x3b83a00
+00000000000i[     ] lt_dlhandle is 0x22be050
 00000000000i[PLGIN] loaded plugin libbx_floppy.so
-00000000000i[     ] lt_dlhandle is 0x3b845c0
+00000000000i[     ] lt_dlhandle is 0x22bec10
 00000000000i[PLGIN] loaded plugin libbx_soundmod.so
-00000000000i[     ] lt_dlhandle is 0x3b84e70
+00000000000i[     ] lt_dlhandle is 0x22bf4c0
 00000000000i[PLGIN] loaded plugin libbx_pci.so
-00000000000i[     ] lt_dlhandle is 0x3b85a30
+00000000000i[     ] lt_dlhandle is 0x22c0080
 00000000000i[PLGIN] loaded plugin libbx_pci2isa.so
-00000000000i[     ] lt_dlhandle is 0x3b86370
+00000000000i[     ] lt_dlhandle is 0x22c09c0
 00000000000i[PLGIN] loaded plugin libbx_usb_common.so
-00000000000i[     ] lt_dlhandle is 0x3b86c10
+00000000000i[     ] lt_dlhandle is 0x22c1260
 00000000000i[PLGIN] loaded plugin libbx_unmapped.so
-00000000000i[     ] lt_dlhandle is 0x3b87490
+00000000000i[     ] lt_dlhandle is 0x22c1ae0
 00000000000i[PLGIN] loaded plugin libbx_biosdev.so
-00000000000i[     ] lt_dlhandle is 0x3b87e60
+00000000000i[     ] lt_dlhandle is 0x22c24b0
 00000000000i[PLGIN] loaded plugin libbx_speaker.so
-00000000000i[     ] lt_dlhandle is 0x3b885f0
+00000000000i[     ] lt_dlhandle is 0x22c2c40
 00000000000i[PLGIN] loaded plugin libbx_extfpuirq.so
-00000000000i[     ] lt_dlhandle is 0x3b88e70
+00000000000i[     ] lt_dlhandle is 0x22c34c0
 00000000000i[PLGIN] loaded plugin libbx_gameport.so
-00000000000i[     ] lt_dlhandle is 0x3b89800
+00000000000i[     ] lt_dlhandle is 0x22c3e50
 00000000000i[PLGIN] loaded plugin libbx_pci_ide.so
-00000000000i[     ] lt_dlhandle is 0x3b8a1e0
+00000000000i[     ] lt_dlhandle is 0x22c4830
 00000000000i[PLGIN] loaded plugin libbx_acpi.so
-00000000000i[     ] lt_dlhandle is 0x3b8ab20
+00000000000i[     ] lt_dlhandle is 0x22c5170
 00000000000i[PLGIN] loaded plugin libbx_ioapic.so
-00000000000i[     ] lt_dlhandle is 0x3b8b4d0
+00000000000i[     ] lt_dlhandle is 0x22c5b20
 00000000000i[PLGIN] loaded plugin libbx_keyboard.so
-00000000000i[     ] lt_dlhandle is 0x3b8bce0
+00000000000i[     ] lt_dlhandle is 0x22c6330
 00000000000i[PLGIN] loaded plugin libbx_harddrv.so
-00000000000i[     ] lt_dlhandle is 0x3b9ddc0
+00000000000i[     ] lt_dlhandle is 0x22d8410
 00000000000i[PLGIN] loaded plugin libbx_serial.so
-00000000000i[     ] lt_dlhandle is 0x3b9ec40
+00000000000i[     ] lt_dlhandle is 0x22d9290
 00000000000i[PLGIN] loaded plugin libbx_parallel.so
 00000000000i[CMOS ] Using local time for initial clock
-00000000000i[CMOS ] Setting initial clock to: Sun Apr 24 15:30:07 2016 (time0=1461526207)
+00000000000i[CMOS ] Setting initial clock to: Sun Apr 24 23:12:27 2016 (time0=1461553947)
 00000000000i[DMA  ] channel 4 used by cascade
 00000000000i[DMA  ] channel 2 used by Floppy Drive
 00000000000i[FDD  ] fd0: 'floppya.img' ro=0, h=2,t=80,spt=18
@@ -157,74 +157,230 @@
 00000000000i[PLGIN] reset of 'serial' plugin device by virtual method
 00000000000i[PLGIN] reset of 'parallel' plugin device by virtual method
 00000003305i[BIOS ] $Revision: 1.257 $ $Date: 2011/01/26 09:52:02 $
-00000320056i[KBD  ] reset-disable command received
-00000452888i[VBIOS] VGABios $Id: vgabios.c,v 1.75 2011/10/15 14:07:21 vruppert Exp $
-00000452959i[VGA  ] VBE known Display Interface b0c0
-00000452991i[VGA  ] VBE known Display Interface b0c5
-00000455916i[VBIOS] VBE Bios $Id: vbe.c,v 1.64 2011/07/19 18:25:05 vruppert Exp $
-00000776032i[BIOS ] Starting rombios32
-00000776470i[BIOS ] Shutdown flag 0
-00000777054i[BIOS ] ram_size=0x02000000
-00000777475i[BIOS ] ram_end=32MB
-00000877335i[BIOS ] Found 1 cpu(s)
-00000893183i[BIOS ] bios_table_addr: 0x000fb928 end=0x000fcc00
-00000893277i[PCI  ] 440FX PMC write to PAM register 59 (TLB Flush)
-00001220974i[PCI  ] 440FX PMC write to PAM register 59 (TLB Flush)
-00001548902i[P2I  ] PCI IRQ routing: PIRQA# set to 0x0b
-00001548921i[P2I  ] PCI IRQ routing: PIRQB# set to 0x09
-00001548940i[P2I  ] PCI IRQ routing: PIRQC# set to 0x0b
-00001548959i[P2I  ] PCI IRQ routing: PIRQD# set to 0x09
-00001548969i[P2I  ] write: ELCR2 = 0x0a
-00001549740i[BIOS ] PIIX3/PIIX4 init: elcr=00 0a
-00001557412i[BIOS ] PCI: bus=0 devfn=0x00: vendor_id=0x8086 device_id=0x1237 class=0x0600
-00001559687i[BIOS ] PCI: bus=0 devfn=0x08: vendor_id=0x8086 device_id=0x7000 class=0x0601
-00001561801i[BIOS ] PCI: bus=0 devfn=0x09: vendor_id=0x8086 device_id=0x7010 class=0x0101
-00001562025i[PIDE ] new BM-DMA address: 0xc000
-00001562640i[BIOS ] region 4: 0x0000c000
-00001564667i[BIOS ] PCI: bus=0 devfn=0x0b: vendor_id=0x8086 device_id=0x7113 class=0x0680
-00001564896i[ACPI ] new irq line = 11
-00001564908i[ACPI ] new irq line = 9
-00001564933i[ACPI ] new PM base address: 0xb000
-00001564947i[ACPI ] new SM base address: 0xb100
-00001564975i[PCI  ] setting SMRAM control register to 0x4a
-00001729068i[CPU0 ] Enter to System Management Mode
-00001729078i[CPU0 ] RSM: Resuming from System Management Mode
-00001893099i[PCI  ] setting SMRAM control register to 0x0a
-00001901849i[BIOS ] MP table addr=0x000fba00 MPC table addr=0x000fb930 size=0xd0
-00001903663i[BIOS ] SMBIOS table addr=0x000fba10
-00001906818i[BIOS ] Firmware waking vector 0x1ff00cc
-00001911742i[BIOS ] ACPI tables: RSDP addr=0x000fbb30 ACPI DATA addr=0x01ff0000 size=0x1f18
-00001911778i[PCI  ] 440FX PMC write to PAM register 59 (TLB Flush)
-00001912502i[BIOS ] bios_table_cur_addr: 0x000fbb54
-00032315744i[BIOS ] Booting from 0000:7c00
-05087264319p[     ] >>PANIC<< SIGNAL 2 caught
-05087264319i[CPU0 ] CPU is in real mode (active)
-05087264319i[CPU0 ] CS.d_b = 16 bit
-05087264319i[CPU0 ] SS.d_b = 16 bit
-05087264319i[CPU0 ] EFER   = 0x00000000
-05087264319i[CPU0 ] | RAX=0000000000000000  RBX=0000000000000022
-05087264319i[CPU0 ] | RCX=0000000000090000  RDX=0000000000000000
-05087264319i[CPU0 ] | RSP=000000000000fd64  RBP=000000000000fd7e
-05087264319i[CPU0 ] | RSI=00000000000e035a  RDI=000000000000ffac
-05087264319i[CPU0 ] |  R8=0000000000000000   R9=0000000000000000
-05087264319i[CPU0 ] | R10=0000000000000000  R11=0000000000000000
-05087264319i[CPU0 ] | R12=0000000000000000  R13=0000000000000000
-05087264319i[CPU0 ] | R14=0000000000000000  R15=0000000000000000
-05087264319i[CPU0 ] | IOPL=0 id vip vif ac vm rf nt of df if tf sf ZF af PF cf
-05087264319i[CPU0 ] | SEG selector     base    limit G D
-05087264319i[CPU0 ] | SEG sltr(index|ti|rpl)     base    limit G D
-05087264319i[CPU0 ] |  CS:f000( 0004| 0|  0) 000f0000 0000ffff 0 0
-05087264319i[CPU0 ] |  DS:0040( 0005| 0|  0) 00000400 0000ffff 0 0
-05087264319i[CPU0 ] |  SS:1000( 0005| 0|  0) 00010000 0000ffff 0 0
-05087264319i[CPU0 ] |  ES:1000( 0005| 0|  0) 00010000 0000ffff 0 0
-05087264319i[CPU0 ] |  FS:0000( 0005| 0|  0) 00000000 0000ffff 0 0
-05087264319i[CPU0 ] |  GS:0000( 0005| 0|  0) 00000000 0000ffff 0 0
-05087264319i[CPU0 ] |  MSR_FS_BASE:0000000000000000
-05087264319i[CPU0 ] |  MSR_GS_BASE:0000000000000000
-05087264319i[CPU0 ] | RIP=000000000000e86b (000000000000e869)
-05087264319i[CPU0 ] | CR0=0x60000010 CR2=0x0000000000000000
-05087264319i[CPU0 ] | CR3=0x00000000 CR4=0x00000000
-05087264319i[CPU0 ] 0x000000000000e869>> jnz .+4 (0x000fe86f) : 7504
-05087264319i[CMOS ] Last time is 1461526715 (Sun Apr 24 15:38:35 2016)
-05087264319i[     ] restoring default signal behavior
-05087264319i[CTRL ] quit_sim called with exit code 1
+00000325049i[KBD  ] reset-disable command received
+00000457881i[VBIOS] VGABios $Id: vgabios.c,v 1.75 2011/10/15 14:07:21 vruppert Exp $
+00000457952i[VGA  ] VBE known Display Interface b0c0
+00000457984i[VGA  ] VBE known Display Interface b0c5
+00000460909i[VBIOS] VBE Bios $Id: vbe.c,v 1.64 2011/07/19 18:25:05 vruppert Exp $
+00000781025i[BIOS ] Starting rombios32
+00000781463i[BIOS ] Shutdown flag 0
+00000782047i[BIOS ] ram_size=0x02000000
+00000782468i[BIOS ] ram_end=32MB
+00000882436i[BIOS ] Found 1 cpu(s)
+00000898284i[BIOS ] bios_table_addr: 0x000fb928 end=0x000fcc00
+00000898378i[PCI  ] 440FX PMC write to PAM register 59 (TLB Flush)
+00001226075i[PCI  ] 440FX PMC write to PAM register 59 (TLB Flush)
+00001554003i[P2I  ] PCI IRQ routing: PIRQA# set to 0x0b
+00001554022i[P2I  ] PCI IRQ routing: PIRQB# set to 0x09
+00001554041i[P2I  ] PCI IRQ routing: PIRQC# set to 0x0b
+00001554060i[P2I  ] PCI IRQ routing: PIRQD# set to 0x09
+00001554070i[P2I  ] write: ELCR2 = 0x0a
+00001554841i[BIOS ] PIIX3/PIIX4 init: elcr=00 0a
+00001562513i[BIOS ] PCI: bus=0 devfn=0x00: vendor_id=0x8086 device_id=0x1237 class=0x0600
+00001564788i[BIOS ] PCI: bus=0 devfn=0x08: vendor_id=0x8086 device_id=0x7000 class=0x0601
+00001566902i[BIOS ] PCI: bus=0 devfn=0x09: vendor_id=0x8086 device_id=0x7010 class=0x0101
+00001567126i[PIDE ] new BM-DMA address: 0xc000
+00001567741i[BIOS ] region 4: 0x0000c000
+00001569768i[BIOS ] PCI: bus=0 devfn=0x0b: vendor_id=0x8086 device_id=0x7113 class=0x0680
+00001569997i[ACPI ] new irq line = 11
+00001570009i[ACPI ] new irq line = 9
+00001570034i[ACPI ] new PM base address: 0xb000
+00001570048i[ACPI ] new SM base address: 0xb100
+00001570076i[PCI  ] setting SMRAM control register to 0x4a
+00001734169i[CPU0 ] Enter to System Management Mode
+00001734179i[CPU0 ] RSM: Resuming from System Management Mode
+00001898200i[PCI  ] setting SMRAM control register to 0x0a
+00001906950i[BIOS ] MP table addr=0x000fba00 MPC table addr=0x000fb930 size=0xd0
+00001908764i[BIOS ] SMBIOS table addr=0x000fba10
+00001911919i[BIOS ] Firmware waking vector 0x1ff00cc
+00001916843i[BIOS ] ACPI tables: RSDP addr=0x000fbb30 ACPI DATA addr=0x01ff0000 size=0x1f18
+00001916879i[PCI  ] 440FX PMC write to PAM register 59 (TLB Flush)
+00001917603i[BIOS ] bios_table_cur_addr: 0x000fbb54
+00032315745i[BIOS ] Booting from 0000:7c00
+01706180000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01706230000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01706320000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01706360000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01706450000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01706470000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01706570000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01706610000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01706690000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01706720000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01706810000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01706850000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01706930000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01706960000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01707060000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01707080000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01708780000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01708820000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01708900000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01708940000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01709020000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01709070000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01709160000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01709190000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01709280000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01709320000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01709420000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01709450000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01709540000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01709580000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01709670000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01709710000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01709800000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01709830000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01709920000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01709960000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01710050000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01710090000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01710170000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01710210000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01710310000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01710340000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01710440000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01710480000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01710570000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01710620000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01710700000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01710740000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01710960000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01711010000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01711100000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01711150000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01711240000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01711290000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01711380000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01711420000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01711520000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01711560000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01711660000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01711700000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01711810000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01711860000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01711950000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01711990000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01712090000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01712140000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01712220000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01712290000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01712390000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01712440000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01712530000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01712590000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01712680000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01712740000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01712870000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01712920000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01712950000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01712990000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01713030000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01713060000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01713100000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01713150000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01713250000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01713280000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01713320000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01713340000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01713440000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01713460000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01713580000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01713600000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01713810000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01713850000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01714060000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01714100000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01714210000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01714250000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01714300000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01714330000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01714360000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01714390000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01714450000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01714490000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01714600000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01714630000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01714660000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01714680000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01714810000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01714850000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01714960000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01715020000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01715070000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01715180000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01715240000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01715270000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01715290000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01715340000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01715440000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01715490000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01715540000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01715640000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01715700000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01715790000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01716180000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01716230000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01716330000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01716400000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01716530000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01716560000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01716730000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01716780000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01716830000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01716860000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01716900000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01716940000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01716970000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01717020000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01717140000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01717160000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01717230000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01717260000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01717300000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01717320000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01717380000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01717430000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01717540000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01717610000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01717710000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01717760000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01717790000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01717830000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01717900000i[KBD  ] internal keyboard buffer full, ignoring scancode.(0e)
+01717980000i[KBD  ] internal keyboard buffer full, ignoring scancode.(8e)
+01718150000i[KBD  ] internal keyboard buffer full, ignoring scancode.(1c)
+01718230000i[KBD  ] internal keyboard buffer full, ignoring scancode.(9c)
+01719120000i[KBD  ] internal keyboard buffer full, ignoring scancode.(1d)
+01719360000i[KBD  ] internal keyboard buffer full, ignoring scancode.(9d)
+01719898944p[     ] >>PANIC<< SIGNAL 2 caught
+01719898944i[CPU0 ] CPU is in real mode (active)
+01719898944i[CPU0 ] CS.d_b = 16 bit
+01719898944i[CPU0 ] SS.d_b = 16 bit
+01719898944i[CPU0 ] EFER   = 0x00000000
+01719898944i[CPU0 ] | RAX=00000000000000cd  RBX=0000000000000052
+01719898944i[CPU0 ] | RCX=0000000000090000  RDX=0000000000000000
+01719898944i[CPU0 ] | RSP=000000000000fd8c  RBP=0000000000000152
+01719898944i[CPU0 ] | RSI=00000000000e035b  RDI=000000000000ffac
+01719898944i[CPU0 ] |  R8=0000000000000000   R9=0000000000000000
+01719898944i[CPU0 ] | R10=0000000000000000  R11=0000000000000000
+01719898944i[CPU0 ] | R12=0000000000000000  R13=0000000000000000
+01719898944i[CPU0 ] | R14=0000000000000000  R15=0000000000000000
+01719898944i[CPU0 ] | IOPL=0 id vip vif ac vm RF nt of df if tf sf zf af pf cf
+01719898944i[CPU0 ] | SEG selector     base    limit G D
+01719898944i[CPU0 ] | SEG sltr(index|ti|rpl)     base    limit G D
+01719898944i[CPU0 ] |  CS:1000( 0004| 0|  0) 00010000 0000ffff 0 0
+01719898944i[CPU0 ] |  DS:1000( 0005| 0|  0) 00010000 0000ffff 0 0
+01719898944i[CPU0 ] |  SS:1000( 0005| 0|  0) 00010000 0000ffff 0 0
+01719898944i[CPU0 ] |  ES:1000( 0005| 0|  0) 00010000 0000ffff 0 0
+01719898944i[CPU0 ] |  FS:0000( 0005| 0|  0) 00000000 0000ffff 0 0
+01719898944i[CPU0 ] |  GS:0000( 0005| 0|  0) 00000000 0000ffff 0 0
+01719898944i[CPU0 ] |  MSR_FS_BASE:0000000000000000
+01719898944i[CPU0 ] |  MSR_GS_BASE:0000000000000000
+01719898944i[CPU0 ] | RIP=000000000000fd93 (000000000000fd93)
+01719898944i[CPU0 ] | CR0=0x60000010 CR2=0x0000000000000000
+01719898944i[CPU0 ] | CR3=0x00000000 CR4=0x00000000
+01719898944i[CPU0 ] 0x000000000000fd93>> jmp far (bad) : FFEE
+01719898944i[CMOS ] Last time is 1461554118 (Sun Apr 24 23:15:18 2016)
+01719898944i[     ] restoring default signal behavior
+01719898944i[CTRL ] quit_sim called with exit code 1

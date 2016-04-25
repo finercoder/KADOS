@@ -60,6 +60,7 @@ main(int argc, char* argv[])
 	//fill the name field with 00s first
 	for (i=0; i<6; i++)
 		dir[dirindex+i]=0x00;
+
 	//copy the name over
 	for (i=0; i<6; i++)
 	{
@@ -67,7 +68,7 @@ main(int argc, char* argv[])
 			break;
 		dir[dirindex+i]=argv[1][i];
 	}
-
+	printf(dir);
 	dirindex=dirindex+6;
 
 	//find free sectors and add them to the file

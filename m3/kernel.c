@@ -238,7 +238,7 @@ void readFile(char fileName[], char buffer[]) {
 
 void executeProgram(char* name, int segment) {
   char buffer[13312];
-  char error[21];
+  char error[27];
   int index;
   int isFound;
   char current;
@@ -254,20 +254,26 @@ void executeProgram(char* name, int segment) {
   error[4] = 'r';
   error[5] = ':';
   error[6] = ' ';
-  error[7] = 'B';
-  error[8] = 'a';
-  error[9] = 'd';
-  error[10] = ' ';
-  error[11] = 'C';
-  error[12] = 'o';
-  error[13] = 'm';
-  error[14] = 'm';
-  error[15] = 'a';
-  error[16] = 'n';
-  error[17] = 'd';
-  error[18] = '\r';
-  error[19] = '\n';
-  error[20] = '\0';
+  error[7] = 'C';
+  error[8] = 'o';
+  error[9] = 'm';
+  error[10] = 'm';
+  error[11] = 'a';
+  error[12] = 'n';
+  error[13] = 'd';
+  error[14] = ' ';
+  error[15] = 'n';
+  error[16] = 'o';
+  error[17] = 't';
+  error[18] = ' ';
+  error[19] = 'f';
+  error[20] = 'o';
+  error[21] = 'u';
+  error[22] = 'n';
+  error[23] = 'd';
+  error[24] = '\r';
+  error[25] = '\n';
+  error[26] = '\0';
 
   /* Initalize array with 0. */
   for (index = 0; index < 1024; index++) {

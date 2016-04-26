@@ -26,16 +26,9 @@ int main() {
     printString(line);
   }
   */
-  char line[80];
 
   makeInterrupt21();
-  while (1) {
-    interrupt(0x21, 4, "tstpr2\0", 0x2000, 0);
-    printString("Enter a line: \0");
-    readString(line);
-    printString(line);
-  }
-
+  interrupt(0x21, 4, "shell\0", 0x2000, 0);
 }
 
 void printString(char* string) {
@@ -145,6 +138,27 @@ void readSector(char* buffer, int sector) {
 }
 
 void handleInterrupt21(int ax, int bx, int cx, int dx) {
+  char error[16];
+
+  /* Set up error string */
+  error[0] = 'E';
+  error[1] = 'r';
+  error[2] = 'r';
+  error[3] = 'o';
+  error[4] = 'r';
+  error[5] = ':';
+  error[6] = ' ';
+  error[7] = 'B';
+  error[8] = 'a';
+  error[9] = 'd';
+  error[10] = ' ';
+  error[11] = 'a';
+  error[12] = 'x';
+  error[13] = '\r';
+  error[14] = '\n';
+  error[15] = '\0';
+
+  /* Case Statements */
   if (ax == 0) {
     printString(bx);
   } else if (ax == 1) {
@@ -158,7 +172,7 @@ void handleInterrupt21(int ax, int bx, int cx, int dx) {
   } else if (ax == 5) {
     terminate();
   } else {
-    printString("Error\0");
+    printString(error);
   }
 }
 
@@ -172,6 +186,7 @@ void readFile(char fileName[], char buffer[]) {
   int sectorsLen;
   int strLen;
 
+  /* Set variables */
   index = 0;
   isFound = 0;
   sectorsLen = 0;
@@ -179,11 +194,9 @@ void readFile(char fileName[], char buffer[]) {
   /* Get directory. */
   readSector(dir, 2);
 
-
   while (index < 513) {
     /* Reset strLen. */
     strLen = 0;
-
 
     /* Find matching file name in directory. */
     for (strIndex = 0; strIndex < 6; strIndex++) {
@@ -196,13 +209,13 @@ void readFile(char fileName[], char buffer[]) {
       if (fileName[strIndex] == '\0' || (fileName[strIndex] == dir[index + strIndex] && strIndex == 5)) {
         isFound = 1;
         break;
-      } 
+      }
     }
 
     /* Found fileName. */
     if (isFound) {
       /* Get sectors. */
-      for (indexRead = 0; indexRead < 32 - strLen; indexRead++) {    
+      for (indexRead = 0; indexRead < 32 - strLen; indexRead++) {
         if (dir[indexRead + index + strLen] == 0x00) {
           break;
         }
@@ -225,37 +238,77 @@ void readFile(char fileName[], char buffer[]) {
 
 void executeProgram(char* name, int segment) {
   char buffer[13312];
+  char error[21];
   int index;
-  int changed;
+  int isFound;
   char current;
 
+  /* Set isFound */
+  isFound = 0;
 
-  changed = 0;
+  /* Set up error string. */
+  error[0] = 'E';
+  error[1] = 'r';
+  error[2] = 'r';
+  error[3] = 'o';
+  error[4] = 'r';
+  error[5] = ':';
+  error[6] = ' ';
+  error[7] = 'B';
+  error[8] = 'a';
+  error[9] = 'd';
+  error[10] = ' ';
+  error[11] = 'C';
+  error[12] = 'o';
+  error[13] = 'm';
+  error[14] = 'm';
+  error[15] = 'a';
+  error[16] = 'n';
+  error[17] = 'd';
+  error[18] = '\r';
+  error[19] = '\n';
+  error[20] = '\0';
+
+  /* Initalize array with 0. */
   for (index = 0; index < 1024; index++) {
     buffer[index] = 0x00;
   }
 
+  /* Reset index and Get file and set current. */
   index = 0;
   readFile(name, buffer);
   current = buffer[index];
-  
+
+  /* Put data into memory. */
   while (index < 13312) {
-    putInMemory(segment, index, current); 
+    putInMemory(segment, index, current);
     current = buffer[++index];
   }
 
+  /* Check if found. */
   if (buffer[0] != '\0') {
-    changed = 1;
-  }
-  
-  if (changed) {
-    launchProgram(segment);
-  } else {
-    terminate();
+    isFound = 1;
   }
 
+  /* If found launch, else terminate. */
+  if (isFound) {
+    launchProgram(segment);
+  } else {
+    interrupt(0x21, 0, error, 0, 0);
+    terminate();
+  }
 }
 
 void terminate() {
-  interrupt(0x21, 4, "shell\0", 0x2000, 0);
+  char shell[6];
+
+  /* Set up shell string. */
+  shell[0] = 's';
+  shell[1] = 'h';
+  shell[2] = 'e';
+  shell[3] = 'l';
+  shell[4] = 'l';
+  shell[5] = '\0';
+
+  interrupt(0x21, 4, shell, 0x2000, 0);
 }

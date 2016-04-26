@@ -1,8 +1,10 @@
+void clearBuffer(char* buffer[], int length);
+
 int main() {
-	char fileName[513];
+	char input[513];
 	char buffer[13312];
 	char shell[8];
-	char error[21];
+	char errorBadCommand[21];
 
 	/* Set up buffer. */
 	buffer[0] = '\0';
@@ -18,50 +20,50 @@ int main() {
 	shell[7] = '\0';
 
 	/* Set up error. */
-	error[0] = 'E';
-	error[1] = 'r';
-	error[2] = 'r';
-	error[3] = 'o';
-	error[4] = 'r';
-	error[5] = ':';
-	error[6] = ' ';
-	error[7] = 'B';
-	error[8] = 'a';
-	error[9] = 'd';
-	error[10] = ' ';
-	error[11] = 'C';
-	error[12] = 'o';
-	error[13] = 'm';
-	error[14] = 'm';
-	error[15] = 'a';
-	error[16] = 'n';
-	error[17] = 'd';
-	error[18] = '\r';
-	error[19] = '\n';
-	error[20] = '\0';
+	errorBadCommand[0] = 'E';
+	errorBadCommand[1] = 'r';
+	errorBadCommand[2] = 'r';
+	errorBadCommand[3] = 'o';
+	errorBadCommand[4] = 'r';
+	errorBadCommand[5] = ':';
+	errorBadCommand[6] = ' ';
+	errorBadCommand[7] = 'B';
+	errorBadCommand[8] = 'a';
+	errorBadCommand[9] = 'd';
+	errorBadCommand[10] = ' ';
+	errorBadCommand[11] = 'C';
+	errorBadCommand[12] = 'o';
+	errorBadCommand[13] = 'm';
+	errorBadCommand[14] = 'm';
+	errorBadCommand[15] = 'a';
+	errorBadCommand[16] = 'n';
+	errorBadCommand[17] = 'd';
+	errorBadCommand[18] = '\r';
+	errorBadCommand[19] = '\n';
+	errorBadCommand[20] = '\0';
 
 	while (1) {
 		/*This puts SHELL> onto the terminal. */
 		interrupt(0x21, 0, shell, 0, 0);
 
 		/*This gets the input from the terminal. */
-		interrupt(0x21, 1, fileName, 0, 0);
+		interrupt(0x21, 1, input, 0, 0);
 
 		/* type command. */
-		if (fileName[0] == 't' && fileName[1] == 'y' && fileName[2] == 'p' && fileName[3] == 'e' && fileName[4] == ' ') {
-			interrupt(0x21, 3, &(fileName[5]), buffer, 0);
+		if (input[0] == 't' && input[1] == 'y' && input[2] == 'p' && input[3] == 'e' && input[4] == ' ') {
+			interrupt(0x21, 3, &(input[5]), buffer, 0);
 			interrupt(0x21, 0, buffer, 0, 0);
 
 			/* Pseudoflush buffer.s */
 			buffer[0] = '\0';
 
 		/* execute command. */
-		} else if (fileName[0] == 'e' && fileName[1] == 'x' && fileName[2] == 'e' && fileName[3] == 'c' && fileName[4] == 'u' && fileName[5] == 't' && fileName[6] == 'e' && fileName[7] == ' ') {
+		} else if (input[0] == 'e' && input[1] == 'x' && input[2] == 'e' && input[3] == 'c' && input[4] == 'u' && input[5] == 't' && input[6] == 'e' && input[7] == ' ') {
 			/* This tries to execute the program specified. */
-			interrupt(0x21, 4, &(fileName[8]), 0x2000, 0);
+			interrupt(0x21, 4, &(input[8]), 0x2000, 0);
 		/* no command found. */
 		} else {
-			interrupt(0x21, 0, error, 0, 0);
+			interrupt(0x21, 0, errorBadCommand, 0, 0);
 		}
 	}
 }

@@ -22,4 +22,4 @@ floppya: kernel message.txt bootload
 	dd if=message.txt of=floppya.img bs=512 count=1 seek=30 conv=notrunc
 
 clean:
-	rm -f *.o kernel
+	rm -f *.o kernel bootload

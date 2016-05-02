@@ -9,9 +9,7 @@ int main() {
 	char buffer[13312];
 	char shell[8];
 	char error[14];
-	char err[6];
 	char fileName[7];
-	char storage[4];
 	char current;
 	int fileIndex;
 	int file2;
@@ -19,13 +17,6 @@ int main() {
 
 	/* Set up buffer. */
 	buffer[0] = '\0';
-
-	err[0] = 'e';
-	err[1] = 'r';
-	err[2] = 'r';
-	err[3] = '\n';
-	err[4] = '\0';
-	err[5] = '\0';
 
 	/* Set up shell. */
 	shell[0] = 'S';
@@ -51,7 +42,7 @@ int main() {
 	error[10] = 'd';
 	error[11] = '\r';
 	error[12] = '\n';
-	error[13] = '\0';
+	error[13] = 0x00;
 
 
 	/* Initialize terminating character to file name string */

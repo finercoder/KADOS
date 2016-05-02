@@ -34,7 +34,7 @@ int main() {
   interrupt(0x21, 4, "shell\0", 0x2000, 0);
 }
 
-void printString(char* string) {
+void printString(char string[]) {
   char current;
   int index;
   char al;

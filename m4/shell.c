@@ -236,16 +236,19 @@ void create(char fileName[]) {
 	while (bufferIndex < 13312) {
 		interrupt(0x21, 1, line, 0, 0);
 
+		/* terminate once you reach the words at the end of the line */
 		if (line[0] == '\r') {
 			break;
 		}
 
 		for (lineIndex = 0; lineIndex < 513; lineIndex++) {
-			if (buffer[bufferIndex] != '\r') {
+			if (line[lineIndex] == '\r') {
 				break;
 			}
 			buffer[bufferIndex++] = line[lineIndex];
 		}
+		buffer[bufferIndex++] = '\r';
+		buffer[bufferIndex++] = '\n';
 	}
 	buffer[bufferIndex] = 0x00;
 

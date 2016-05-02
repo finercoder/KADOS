@@ -447,7 +447,7 @@ void writeFile(char* fileName, char* buffer, int numberSectors) {
     if (directory[dirIndex] == 0x00) {
       /* Write the first 6 characters of the filename */
       for (fileIndex = 0; fileIndex < 6; fileIndex++) {
-        if (fileName[fileIndex] != '\0') {
+        if (fileName[fileIndex] != '\0' && fileName[fileIndex] != '\r') {
           directory[dirIndex + fileIndex] = fileName[fileIndex];
         } else {
           directory[dirIndex + fileIndex] = 0x00;

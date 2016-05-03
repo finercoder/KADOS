@@ -196,6 +196,7 @@ void copy(char input[]) {
 void printDirectory() {
 	char dir[513];
 	char line[33];
+	char heading[32];
 	int sectNum;
 	int dirIndex;
 	int fileIndex;
@@ -203,6 +204,43 @@ void printDirectory() {
 
 	/* fill directory */
 	interrupt(0x21, 2, dir, 0x2, 0);
+
+	/* initialize heading */
+	heading[0] = 'F';
+	heading[1] = 'i';
+	heading[2] = 'l';
+	heading[3] = 'e';
+	heading[4] = ' ';
+	heading[5] = 'n';
+	heading[6] = 'a';
+	heading[7] = 'm';
+	heading[8] = 'e';
+	heading[9] = ' ';
+	heading[10] = ' ';
+	heading[11] = ' ';
+	heading[12] = ' ';
+	heading[13] = ' ';
+	heading[14] = ' ';
+	heading[15] = ' ';
+	heading[16] = ' ';
+	heading[17] = ' ';
+	heading[18] = 'N';
+	heading[19] = 'o';
+	heading[20] = '.';
+	heading[21] = ' ';
+	heading[22] = 's';
+	heading[23] = 'e';
+	heading[24] = 'c';
+	heading[25] = 't';
+	heading[26] = 'o';
+	heading[27] = 'r';
+	heading[28] = 's';
+	heading[29] = '\r';
+	heading[30] = '\n';
+	heading[31] = '\0';
+
+	/* print heading */
+	interrupt(0x21, 0, heading, 0, 0);
 
 	for (dirIndex = 0; dirIndex < 513; dirIndex = dirIndex + 32) {
 		lineIndex = 0;

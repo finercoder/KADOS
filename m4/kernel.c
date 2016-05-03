@@ -198,6 +198,12 @@ void readFile(char fileName[], char buffer[]) {
   int sectorsLen;
   int strLen;
 
+  char s1[4];
+
+  s1[1] = '\r';
+  s1[2] = '\n';
+  s1[3] = '\0';
+
   /* Initalize variables */
   index = 0;
   isFound = 0;
@@ -206,19 +212,17 @@ void readFile(char fileName[], char buffer[]) {
   /* Get directory. */
   readSector(directory, 2);
 
-  while (index < 513) {
+  for (index = 0; index < 513; index = index + 32) {
     /* Reset strLen. */
     strLen = 0;
 
     /* Find matching file name in directory. */
     for (strIndex = 0; strIndex < 6; strIndex++) {
-      if (fileName[strIndex] == directory[index + strIndex]) {
-        strLen++;
-      } else {
+      if (fileName[strIndex] != directory[index + strIndex]) {
         break;
       }
 
-      if (fileName[strIndex] == '\0' || (fileName[strIndex] == directory[index + strIndex] && strIndex == 5)) {
+      if (fileName[strIndex] == 0x00 || fileName[strIndex] == '\r' || (fileName[strIndex] == directory[index + strIndex] && strIndex == 5)) {
         isFound = 1;
         break;
       }
@@ -227,18 +231,15 @@ void readFile(char fileName[], char buffer[]) {
     /* Found fileName. */
     if (isFound) {
       /* Get sectors. */
-      for (indexRead = 0; indexRead < 32 - strLen; indexRead++) {
-        if (directory[indexRead + index + strLen] == 0x00) {
+      for (indexRead = 6; indexRead < 32; indexRead++) {
+        if (directory[index + indexRead] == 0x00) {
           break;
         }
-        sectors[indexRead] = directory[indexRead + index + strLen];
+        sectors[indexRead - 6] = directory[index + indexRead];
         sectorsLen++;
       }
       break;
     }
-
-    /* Update index */
-    index = index + 32;
   }
 
   /* Read sector */
@@ -357,7 +358,6 @@ void deleteFile(char* fileName) {
   char map[513];
   int index;
   int strIndex;
-  int strLen;
   int sectors[26];
   int sectorsLen;
   int isFound;
@@ -372,15 +372,10 @@ void deleteFile(char* fileName) {
   readSector(directory, 2);
   readSector(map, 1);
 
-  while (index < 513) {
-    /* Reset strLen. */
-    strLen = 0;
-
+  for (index = 0; index < 513; index = index + 32) {
     /* Find matching file name in directory. */
     for (strIndex = 0; strIndex < 6; strIndex++) {
-      if (fileName[strIndex] == directory[index + strIndex]) {
-        strLen++;
-      } else {
+      if (fileName[strIndex] != directory[index + strIndex]) {
         break;
       }
 
@@ -394,11 +389,12 @@ void deleteFile(char* fileName) {
     if (isFound) {
 
       /* Get sectors. */
-      for (indexRead = 0; indexRead < 32 - strLen; indexRead++) {
-        if (directory[indexRead + index + strLen] == 0x00) {
+      for (indexRead = 0; indexRead < 32; indexRead++) {
+        if (directory[index + indexRead] == 0x00) {
           break;
         }
-        sectors[indexRead] = directory[indexRead + index + strLen];
+
+        sectors[indexRead] = directory[index + indexRead];
         sectorsLen++;
       }
 
@@ -406,9 +402,6 @@ void deleteFile(char* fileName) {
       directory[index] = 0x00;
       break;
     }
-
-    /* Update index */
-    index = index + 32;
   }
 
   /* Clear map sectors */
@@ -430,7 +423,6 @@ void writeFile(char* fileName, char* buffer, int numberSectors) {
   int sectorWrite;
   int clearBlock;
   int clear;
-
   int isFound;
 
   /* Initalize Variables. */
@@ -463,10 +455,10 @@ void writeFile(char* fileName, char* buffer, int numberSectors) {
           if (map[mapIndex] == 0x00) {
             /* Mark map as used and set directory to map value */
             map[mapIndex] = 0xFF;
-            directory[dirIndex + sectorWrite] = mapIndex + 1; /* is this right */
+            directory[dirIndex + sectorWrite] = mapIndex; /* is this right */
 
             /* Write the buffer to the sector and update buffer */
-            writeSector(buffer, mapIndex + 1);
+            writeSector(buffer, mapIndex);
             buffer = buffer + 512;
 
             /* Leave map loop */

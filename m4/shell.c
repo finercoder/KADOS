@@ -1,22 +1,20 @@
-void clearBuffer(char* buffer[], int length);
+/* Helper methods */
 int getNumSect(char fileName[]);
-void printDirectory();
 int mod(int a, int b);
+
+/* Command methods */
+void type(char input[]);
+void execute(char input[]);
+void deleteFile(char input[]);
+void copy(char inputPtr[]);
+void printDirectory();
 void create(char fileName[]);
+void error();
 
 int main() {
-	char input[513];
-	char buffer[13312];
 	char shell[8];
-	char error[14];
-	char fileName[7];
-	char current;
-	int fileIndex;
-	int file2;
-	int sectNum;
-
-	/* Set up buffer. */
-	buffer[0] = '\0';
+	char input[513];
+	int i;
 
 	/* Set up shell. */
 	shell[0] = 'S';
@@ -28,7 +26,308 @@ int main() {
 	shell[6] = ' ';
 	shell[7] = '\0';
 
-	/* Set up error. */
+	/* Initialize the input array. */
+	for (i = 0; i < 513; i++) {
+		input[i] = '\0';
+	}
+
+	while (1) {
+		/*This puts SHELL> onto the terminal. */
+		interrupt(0x21, 0, shell, 0, 0);
+
+		/*This gets the input from the terminal. */
+		interrupt(0x21, 1, input, 0, 0);
+
+		/* type command. */
+		if (input[0] == 't' && input[1] == 'y' && input[2] == 'p' && input[3] == 'e' && input[4] == ' ') {
+			type(input);
+
+		/* execute command. */
+		} else if (input[0] == 'e' && input[1] == 'x' && input[2] == 'e' && input[3] == 'c' && input[4] == 'u' && input[5] == 't' && input[6] == 'e' && input[7] == ' ') {
+			execute(input);
+
+		/* delete command */
+		} else if (input[0] == 'd' && input[1] == 'e' && input[2] == 'l' && input[3] == 'e' && input[4] == 't' && input[5] == 'e' && input[6] == ' ') {
+			deleteFile(input);
+		/* copy command */
+		} else if (input[0] == 'c' && input[1] == 'o' && input[2] == 'p' && input[3] == 'y' && input[4] == ' ') {
+			copy(input);
+
+		/* dir command */
+		} else if (input[0] == 'd' && input[1] == 'i' && input[2] == 'r' && input[3] == '\r') {
+			printDirectory();
+
+		/* create command */
+		}	else if (input[0] == 'c' && input[1] == 'r' && input[2] == 'e' && input[3] == 'a' && input[4] == 't' && input[5] == 'e' && input[6] == ' ') {
+			create(&(input[7]));
+
+		/* no command found. */
+		} else {
+			error();
+		}
+	}
+}
+
+/*
+	Prints the value of the given text file to the terminal.
+*/
+void type(char input[]) {
+	char buffer[13312];
+	char s1[4];
+	int i;
+
+	s1[1] = '\r';
+	s1[2] = '\n';
+	s1[3] = '\0';
+
+	for (i  = 0; i < 13313; i++) {
+		buffer[i] = '\0';
+	}
+
+	for (i = 5; i < 11; i++) {
+		if (input[i] == '\r') {
+			input[i] = '\0';
+		}
+	}
+
+	input[11] = '\r';
+
+
+	interrupt(0x21, 3, &(input[5]), buffer, 0);
+	interrupt(0x21, 0, buffer, 0, 0);
+}
+
+/*
+	Attempts to execute a specified program name.
+*/
+void execute(char input[]) {
+	interrupt(0x21, 4, &(input[8]), 0x2000, 0);
+}
+
+/*
+	Deletes a specified file.
+*/
+void deleteFile(char input[]) {
+	char fileName[7];
+	int i;
+
+	/* Clear fileName. */
+	for (i = 0; i < 7; i++) {
+		fileName[i] = '\0';
+	}
+
+	/* Normalize input. */
+	for (i = 7; i < 13; i++) {
+		if (input[i] == '\r') {
+			fileName[i - 7] = '\0';
+		} else {
+			fileName[i - 7] = input[i];
+		}
+	}
+
+	/* Set carriage return character end. */
+	fileName[6] = '\r';
+
+	/* Delete file */
+	interrupt(0x21, 7, fileName, 0, 0);
+}
+
+/*
+	Copys a text file to a specified input.
+*/
+void copy(char input[]) {
+	int fileIndex;
+	int sectorNumbers;
+	int fileOffset;
+	int i;
+	char data[13312];
+	char fileName[7];
+	char current;
+
+	/* Initialize fileName and data */
+	for (i = 0; i < 7; i++) {
+		fileName[i] = '\0';
+	}
+	for (i = 0; i < 13313; i++) {
+		data[i] = '\0';
+	}
+
+	/* Get filename1 */
+	for (fileIndex = 0; fileIndex < 6; fileIndex++) {
+		current = input[5 + fileIndex];
+		if (current == ' ') {
+			break;
+		}
+		fileName[fileIndex] = current;
+	}
+
+	/* Get filename data */
+	interrupt(0x21, 3, fileName, data, 0);
+
+	/* Get sector number */
+	sectorNumbers = getNumSect(fileName);
+
+	/* Get filename2 */
+	fileOffset = 5 + fileIndex + 1;
+	for (fileIndex = 0; fileIndex < 6; fileIndex++) {
+		current = input[fileOffset + fileIndex];
+
+		/* Leave loop early if return character detected */
+		if (current == '\r') {
+			break;
+		}
+
+		/* Set value of fileName (2) */
+		fileName[fileIndex] = current;
+	}
+
+	/* Zero out the rest */
+	for (fileIndex = fileIndex; fileIndex < 6; fileIndex++) {
+		fileName[fileIndex] = 0x00;
+	}
+
+	/* Copy */
+	interrupt(0x21, 8, fileName, data, sectorNumbers);
+}
+
+/*
+	Prints the directory of the OS.
+*/
+void printDirectory() {
+	char dir[513];
+	char line[33];
+	int sectNum;
+	int dirIndex;
+	int fileIndex;
+	int lineIndex;
+
+	/* fill directory */
+	interrupt(0x21, 2, dir, 0x2, 0);
+
+	for (dirIndex = 0; dirIndex < 513; dirIndex = dirIndex + 32) {
+		lineIndex = 0;
+		if (dir[dirIndex] != 0x00) {
+			for (fileIndex = 0; fileIndex < 6; fileIndex++) {
+				if (dir[dirIndex + fileIndex] == 0x00) {
+					break;
+				}
+				line[lineIndex++] = dir[dirIndex + fileIndex];
+			}
+
+			line[lineIndex] = 0x0;
+
+			sectNum = getNumSect(line);
+
+			/* Set spaces for alignment */
+			while (lineIndex < 27) {
+				line[lineIndex++] = ' ';
+			}
+
+			/* Get number of sectors */
+			if (sectNum / 10 != 0) {
+				line[lineIndex++] = sectNum / 10 + '0';
+				line[lineIndex++] = mod(sectNum, 10) + '0';
+			} else {
+				line[lineIndex++] = ' ';
+				line[lineIndex++] = sectNum +'0';
+			}
+
+			/* Set the ending characters. */
+			line[lineIndex++] = '\r';
+			line[lineIndex++] = '\n';
+			line[lineIndex] = '\0';
+
+			/* Print a line. */
+			interrupt(0x21, 0, line, 0, 0);
+		}
+	}
+}
+
+/*
+	Creates a text file. Request for each line until an empty line is entered.
+*/
+void create(char fileName[]) {
+	char prompt[9];
+	char buffer[13312];
+	char line[513];
+	int bufferIndex;
+	int lineIndex;
+	int i;
+	int fileNameSize;
+
+	/* Clear buffers. */
+	for (i = 0; i < 13313; i++) {
+		buffer[i] = '\0';
+	}
+
+	/* Normalize the filename with 0 buffers */
+	for (fileNameSize = 0; fileNameSize < 6; fileNameSize++) {
+		if (fileName[fileNameSize] == '\r') {
+			fileName[fileNameSize] = '\0';
+		}
+	}
+
+	/* Set last character to carriage return. */
+	fileName[6] = '\r';
+
+	/* Initialize prompt */
+	prompt[0] = 'e';
+	prompt[1] = 'n';
+	prompt[2] = 't';
+	prompt[3] = 'e';
+	prompt[4] = 'r';
+	prompt[5] = ':';
+	prompt[6] = '\r';
+	prompt[7] = '\n';
+	prompt[8] = 0x0;
+
+	/* Set bufferIndex */
+	bufferIndex = 0;
+
+	/* Print prompt */
+	interrupt(0x21, 0, prompt, 0, 0);
+
+	/* Get text to write */
+	while (bufferIndex < 13313) {
+		/* Clear line */
+		for (i = 0; i < 513; i++) {
+			line[i] = '\0';
+		}
+
+		/* Read line from terminal */
+		interrupt(0x21, 1, line, 0, 0);
+
+		/* Terminate once you reach the words at the end of the line */
+		if (line[0] == '\r') {
+			break;
+		}
+
+		/* Add line to buffer */
+		for (lineIndex = 0; lineIndex < 513; lineIndex++) {
+			if (line[lineIndex] == '\r') {
+				break;
+			}
+			buffer[bufferIndex++] = line[lineIndex];
+		}
+
+		/* Set ending characters */
+		buffer[bufferIndex++] = '\r';
+		buffer[bufferIndex++] = '\n';
+	}
+
+	/* Null terminate the buffer */
+	buffer[bufferIndex] = '\0';
+
+	/* Write buffer */
+	interrupt(0x21, 8, fileName, buffer, bufferIndex / 512 + 1);
+}
+
+/*
+	Prints an error message.
+*/
+void error() {
+	char error[14];
+
 	error[0] = 'b';
 	error[1] = 'a';
 	error[2] = 'd';
@@ -42,80 +341,17 @@ int main() {
 	error[10] = 'd';
 	error[11] = '\r';
 	error[12] = '\n';
-	error[13] = 0x00;
+	error[13] = '\0';
 
+	interrupt(0x21, 0, error, 0, 0);
+}
 
-	/* Initialize terminating character to file name string */
-	fileName[7] = '\0';
+int mod(int a, int b) {
+  while (a >= b) {
+    a = a - b;
+  }
 
-	sectNum = 0;
-
-	while (1) {
-		/*This puts SHELL> onto the terminal. */
-		interrupt(0x21, 0, shell, 0, 0);
-
-		/*This gets the input from the terminal. */
-		interrupt(0x21, 1, input, 0, 0);
-
-		/* type command. */
-		if (input[0] == 't' && input[1] == 'y' && input[2] == 'p' && input[3] == 'e' && input[4] == ' ') {
-			interrupt(0x21, 3, &(input[5]), buffer, 0);
-			interrupt(0x21, 0, buffer, 0, 0);
-
-			/* Pseudoflush buffer.s */
-			buffer[0] = '\0';
-
-		/* execute command. */
-		} else if (input[0] == 'e' && input[1] == 'x' && input[2] == 'e' && input[3] == 'c' && input[4] == 'u' && input[5] == 't' && input[6] == 'e' && input[7] == ' ') {
-			/* This tries to execute the program specified. */
-			interrupt(0x21, 4, &(input[8]), 0x2000, 0);
-		/* delete command */
-		} else if (input[0] == 'd' && input[1] == 'e' && input[2] == 'l' && input[3] == 'e' && input[4] == 't' && input[5] == 'e' && input[6] == ' ') {
-			interrupt(0x21, 7, &(input[7]), 0, 0);
-		/* copy command */
-		} else if (input[0] == 'c' && input[1] == 'o' && input[2] == 'p' && input[3] == 'y' && input[4] == ' ') {
-			/* Get filename1 */
-			for (fileIndex = 0; fileIndex < 6; fileIndex++) {
-				current = input[5 + fileIndex];
-				if (current == ' ') {
-					break;
-				}
-				fileName[fileIndex] = current;
-			}
-
-			/* Get filename data */
-			interrupt(0x21, 3, fileName, buffer, 0);
-
-			/* Get sector number */
-			sectNum = getNumSect(fileName);
-
-			/* Get filename2 */
-			file2 = 5 + fileIndex + 1;
-
-			for (fileIndex = 0; fileIndex < 6; fileIndex++) {
-				current = input[file2 + fileIndex];
-				if (current == '\r') {
-					break;
-				}
-				fileName[fileIndex] = current;
-			}
-
-			for (fileIndex = fileIndex; fileIndex < 6; fileIndex++) {
-				fileName[fileIndex] = 0x00;
-			}
-
-			/* Copy */
-			interrupt(0x21, 8, fileName, buffer, sectNum);
-
-		} else if (input[0] == 'd' && input[1] == 'i' && input[2] == 'r' && input[3] == '\r') {
-			printDirectory();
-			/* no command found. */
-		}	else if (input[0] == 'c' && input[1] == 'r' && input[2] == 'e' && input[3] == 'a' && input[4] == 't' && input[5] == 'e' && input[6] == ' ') {
-			create(input + 7);
-		} else {
-			interrupt(0x21, 0, error, 0, 0);
-		}
-	}
+  return a;
 }
 
 int getNumSect(char fileName[]) {
@@ -158,100 +394,4 @@ int getNumSect(char fileName[]) {
 		}
 	}
 	return sectNum;
-}
-
-void printDirectory() {
-	char dir[513];
-	char line[33];
-	int sectNum;
-	int dirIndex;
-	int fileIndex;
-	int lineIndex;
-
-	/* fill directory */
-	interrupt(0x21, 2, dir, 0x2, 0);
-
-	for (dirIndex = 0; dirIndex < 513; dirIndex = dirIndex + 32) {
-		lineIndex = 0;
-		if (dir[dirIndex] != 0x00) {
-			for (fileIndex = 0; fileIndex < 6; fileIndex++) {
-				if (dir[dirIndex + fileIndex] == 0x00) {
-					break;
-				}
-				line[lineIndex++] = dir[dirIndex + fileIndex];
-			}
-
-			line[lineIndex] = 0x0;
-
-			sectNum = getNumSect(line);
-
-			while (lineIndex < 27) {
-				line[lineIndex++] = ' ';
-			}
-
-			if (sectNum/10 != 0) {
-				line[lineIndex++] = sectNum/10 + '0';
-				line[lineIndex++] = mod(sectNum, 10) + '0';
-			} else {
-				line[lineIndex++] = ' ';
-				line[lineIndex++] = sectNum +'0';
-			}
-			line[lineIndex++] = '\r';
-			line[lineIndex++] = '\n';
-			line[lineIndex] = 0x0;
-			interrupt(0x21, 0, line, 0, 0);
-		}
-	}
-}
-
-int mod(int a, int b) {
-  while (a >= b) {
-    a = a - b;
-  }
-
-  return a;
-}
-
-void create(char fileName[]) {
-	char prompt[9];
-	char buffer[13312];
-	char line[513];
-	int bufferIndex;
-	int lineIndex;
-
-	prompt[0] = 'e';
-	prompt[1] = 'n';
-	prompt[2] = 't';
-	prompt[3] = 'e';
-	prompt[4] = 'r';
-	prompt[5] = ':';
-	prompt[6] = '\r';
-	prompt[7] = '\n';
-	prompt[8] = 0x0;
-
-	bufferIndex = 0;
-
-	interrupt(0x21, 0, prompt, 0, 0);
-
-	while (bufferIndex < 13312) {
-		interrupt(0x21, 1, line, 0, 0);
-
-		/* terminate once you reach the words at the end of the line */
-		if (line[0] == '\r') {
-			break;
-		}
-
-		for (lineIndex = 0; lineIndex < 513; lineIndex++) {
-			if (line[lineIndex] == '\r') {
-				break;
-			}
-			buffer[bufferIndex++] = line[lineIndex];
-		}
-		buffer[bufferIndex++] = '\r';
-		buffer[bufferIndex++] = '\n';
-	}
-	buffer[bufferIndex] = 0x00;
-
-	interrupt(0x21, 8, fileName, buffer, bufferIndex/512 + 1);
-
 }

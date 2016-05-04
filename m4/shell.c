@@ -143,6 +143,47 @@ void copy(char input[]) {
 	char data[13312];
 	char fileName[7];
 	char current;
+	char duplicateError[40];
+	duplicateError[0] = 'A';
+	duplicateError[1] = ' ';
+	duplicateError[2] = 'f';
+	duplicateError[3] = 'i';
+	duplicateError[4] = 'l';
+	duplicateError[5] = 'e';
+	duplicateError[6] = ' ';
+	duplicateError[7] = 'w';
+	duplicateError[8] = 'i';
+	duplicateError[9] = 't';
+	duplicateError[10] = 'h';
+	duplicateError[11] = ' ';
+	duplicateError[12] = 't';
+	duplicateError[13] = 'h';
+	duplicateError[14] = 'i';
+	duplicateError[15] = 's';
+	duplicateError[16] = ' ';
+	duplicateError[17] = 'n';
+	duplicateError[18] = 'a';
+	duplicateError[19] = 'm';
+	duplicateError[20] = 'e';
+	duplicateError[21] = ' ';
+	duplicateError[22] = 'a';
+	duplicateError[23] = 'l';
+	duplicateError[24] = 'r';
+	duplicateError[25] = 'e';
+	duplicateError[26] = 'a';
+	duplicateError[27] = 'd';
+	duplicateError[28] = 'y';
+	duplicateError[29] = ' ';
+	duplicateError[30] = 'e';
+	duplicateError[31] = 'x';
+	duplicateError[32] = 'i';
+	duplicateError[33] = 's';
+	duplicateError[34] = 't';
+	duplicateError[35] = 's';
+	duplicateError[36] = '.';
+	duplicateError[37] = '\r';
+	duplicateError[38] = '\n';
+	duplicateError[39] = '\0';
 
 	/* Initialize fileName and data */
 	for (i = 0; i < 7; i++) {
@@ -185,6 +226,14 @@ void copy(char input[]) {
 	for (fileIndex = fileIndex; fileIndex < 6; fileIndex++) {
 		fileName[fileIndex] = 0x00;
 	}
+
+	/* get directory */
+	
+	if (isInDirectory(fileName)) {
+		interrupt(0x21, 0, duplicateError, 0, 0);
+		return;
+	}
+	
 
 	/* Copy */
 	interrupt(0x21, 8, fileName, data, sectorNumbers);
@@ -432,4 +481,33 @@ int getNumSect(char fileName[]) {
 		}
 	}
 	return sectNum;
+}
+
+/* determines whether there is already a file in the directory with the given name */
+int isInDirectory(char fileName[]) {
+	char dir[513];
+	int dirIndex;
+	int fileIndex;
+	int isFound;
+
+	isFound = 0;
+
+	/* fill directory */
+	interrupt(0x21, 2, dir, 0x2, 0);
+
+	for (dirIndex = 0; dirIndex < 513; dirIndex = dirIndex + 32) {
+
+		/* find first character of file name in directory */
+		if (dir[dirIndex] == fileName[0]) {
+			for (fileIndex = 1; fileIndex < 7; fileIndex++) {
+				if (fileName[fileIndex] == 0x00) {
+					isFound = 1;
+					break;
+				} else if (fileName[fileIndex] != dir[dirIndex + fileIndex]) {
+					break;
+				}
+			}
+		}
+	}
+	return isFound;
 }

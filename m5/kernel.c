@@ -12,6 +12,8 @@ void deleteFile(char* fileName);
 void writeFile(char* fileName, char* buffer, int numberSectors);
 void handleTimerInterrupt(int segment, int sp);
 
+void debugPrint(char printThis);
+
 struct ProcessEntry {
   int isActive;
   int sp;
@@ -32,16 +34,26 @@ int main() {
   shell[4] = 'l';
   shell[5] = '\0';
 
-  makeInterrupt21();
-
-  makeTimerInterrupt();
-
+  /*
+  Initialize global variables.
+  */
+  setKernelDataSegment();
+  currentProcess = -1;
   for (i = 0; i < 8; i++) {
     processTable[i].isActive = 0;
     processTable[i].sp = 0xff00;
   }
-  currentProcess = -1;
+  restoreDataSegment();
 
+  /*
+    Set InterruptS.
+  */
+  makeInterrupt21();
+  makeTimerInterrupt();
+
+  /*
+    Execute Shell.
+  */
   interrupt(0x21, 4, shell, 0x2000, 0);
 }
 
@@ -81,7 +93,7 @@ void readString(char stringArr[]) {
     /* Handles backspace when no input. */
     if (stringArr[index] == 0x8 && index == 0) {
       continue;
-    }
+  }
 
     /* Print input and increment index. */
     printString(storage);
@@ -269,16 +281,11 @@ void executeProgram(char* name) {
   int isFound;
   char current;
 
-  char flag[4];
-
   setKernelDataSegment();
 
   isFound = 0;
   bufferIndex = 0;
 
-  flag[1] = '\r';
-  flag[2] = '\n';
-  flag[3] = '\0';
 
   /* Set up error string. */
   error[0] = 'E';
@@ -344,12 +351,15 @@ void executeProgram(char* name) {
   index = 0;
   readFile(name, buffer);
   current = buffer[index];
-flag[0] = buffer[3];
-printString(flag);
-flag[0] = buffer[4];
-printString(flag);
 
-  /* Put data into memory. */
+/*
+Check if these chacters match the shell.
+debugPrint(buffer[3]);
+debugPrint(buffer[4]);
+
+*/
+
+  /* OLD: Put data into memory. */
 /*
   while (index < 13312) {
     putInMemory(segment, index, current);
@@ -362,14 +372,12 @@ printString(flag);
     for (index = 0; index < 8; index++) {
       if (processTable[index].isActive == 0) {
 /*
-flag[0] = index + '0';
-printString(flag);
+debugPrint(buffer[0]);
 */
         /* Put data into memory. */
         while (bufferIndex < 13312) {
 /*
-flag[0] = current;
-printString(flag);
+debugPrint(current);
 */
           putInMemory((index + 2) * 0x1000, bufferIndex, current);
           current = buffer[++bufferIndex];
@@ -377,7 +385,12 @@ printString(flag);
         processTable[index].isActive = 1;
         currentProcess = index;
         initializeProgram((index + 2) * 0x1000);
+        // launchProgram((index + 2) * 0x1000);
         restoreDataSegment();
+
+        /*
+          debugPrint(processTable[index].isActive + '0');
+        */
         return;
       }
     }
@@ -401,6 +414,7 @@ void terminate() {
   shell[4] = 'l';
   shell[5] = '\0';
 
+debugPrint('T');
   setKernelDataSegment();
   processTable[currentProcess].isActive = 0;
   restoreDataSegment();
@@ -566,36 +580,59 @@ void writeFile(char* fileName, char* buffer, int numberSectors) {
 }
 
 void handleTimerInterrupt(int segment, int sp) {
-  int oldProcess;
+  int processIndex;
   char ticBuffer[6];
-  char flag[4];
+  int offset;
+
+  setKernelDataSegment();
+
   ticBuffer[0] = 'T';
   ticBuffer[1] = 'i';
   ticBuffer[2] = 'c';
   ticBuffer[3] = '\r';
   ticBuffer[4] = '\n';
   ticBuffer[5] = '\0';
-  flag[1] = '\r';
-  flag[2] = '\n';
-  flag[3] = '\0';
-  
+
+  if (currentProcess == -1) {
+    restoreDataSegment();
+    returnFromTimer(segment, sp);
+  }
+
   processTable[currentProcess].sp = sp;
-  for (oldProcess = 1; oldProcess < 8; oldProcess++) {
-    if (processTable[mod(currentProcess + oldProcess, 8)].isActive) {
-      currentProcess = oldProcess;
-/*
-      segment = (oldProcess + 2) * 0x1000;
-*/
+  for (processIndex = 1; processIndex < 8; processIndex++) {
+    offset = mod(currentProcess + processIndex, 8);
+    /*
+      debugPrint(processTable[offset].isActive + '0');
+    */
+    if (processTable[mod(currentProcess + processIndex, 8)].isActive) {
+      debugPrint('S');
+      currentProcess = processIndex;
+      segment = (currentProcess + 2) * 0x1000;
+      sp = processTable[currentProcess].sp;
       break;
     }
-  } 
+  }
 
 /*
   printString(ticBuffer);
 */
-flag[0] = sp + '0';
-printString(flag);
 
+/*
+print Stack pointer.
+debugPrint(sp + '0');
+*/
+restoreDataSegment();
   returnFromTimer(segment, sp);
 
+}
+
+void debugPrint(char printThis) {
+  char debugString[4];
+
+  debugString[0] = printThis;
+  debugString[1] = '\r';
+  debugString[2] = '\n';
+  debugString[3] = '\0';
+
+  printString(debugString);
 }

@@ -198,12 +198,6 @@ void readFile(char fileName[], char buffer[]) {
   int sectorsLen;
   int strLen;
 
-  char s1[4];
-
-  s1[1] = '\r';
-  s1[2] = '\n';
-  s1[3] = '\0';
-
   /* Initalize variables */
   index = 0;
   isFound = 0;
@@ -289,7 +283,7 @@ void executeProgram(char* name, int segment) {
   error[26] = '\0';
 
   /* Initalize array with 0. */
-  for (index = 0; index < 1024; index++) {
+  for (index = 0; index < 13312; index++) {
     buffer[index] = 0x00;
   }
 
@@ -310,7 +304,7 @@ void executeProgram(char* name, int segment) {
   }
 
   /* If found launch, else terminate. */
-  if (isFound) {
+  if (buffer[0] != '\0') {
     launchProgram(segment);
   } else {
     interrupt(0x21, 0, error, 0, 0);

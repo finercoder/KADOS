@@ -40,4 +40,4 @@ floppya: kernel message.txt bootload loadFile shell
 	./loadFile shell
 
 clean:
-	rm -f *.o kernel shell loadFile bootload bochsout.txt
+	rm -f *.o kernel shell loadFile bootload bochsout.txt floppya.img

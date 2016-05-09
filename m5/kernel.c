@@ -26,7 +26,12 @@ struct ProcessEntry {
 struct ProcessEntry processTable[8];
 int currentProcess;
 
-
+#define PROCESS_TABLE_SIZE 8
+#define SHELL_ID 0
+#define SECTOR_SIZE 513
+#define MAX_BUFFER_SIZE 13312
+#define MAP_SECTOR 1
+#define DIRECTORY_SECTOR 2
 
 int main() {
   int i;
@@ -41,7 +46,7 @@ int main() {
   shell[5] = '\0';
 
   /* Initialize global variables. */
-  for (i = 0; i < 8; i++) {
+  for (i = 0; i < PROCESS_TABLE_SIZE; i++) {
     processTable[i].isActive = 0;
     processTable[i].sp = 0xff00;
     processTable[i].waiting = -1;
@@ -88,7 +93,7 @@ void readString(char stringArr[]) {
   /* Set storage terminating character */
   storage[1] = '\0';
 
-  while (index < 513) {
+  while (index < SECTOR_SIZE) {
     /* Get input */
     stringArr[index] = interrupt(0x16, 0, 0, 0, 0);
     storage[0] = stringArr[index];
@@ -201,7 +206,7 @@ void handleInterrupt21(int ax, int bx, int cx, int dx) {
 }
 
 void readFile(char fileName[], char buffer[]) {
-  char directory[513];
+  char directory[SECTOR_SIZE];
   int index;
   int strIndex;
   int isFound;
@@ -216,9 +221,10 @@ void readFile(char fileName[], char buffer[]) {
   sectorsLen = 0;
 
   /* Get directory. */
-  readSector(directory, 2);
+  readSector(directory, DIRECTORY_SECTOR);
 
-  for (index = 0; index < 513; index = index + 32) {
+  /* Loop through the directory and find name. A line is 32 bytes */
+  for (index = 0; index < SECTOR_SIZE; index = index + 32) {
     /* Reset strLen. */
     strLen = 0;
 
@@ -258,7 +264,7 @@ void readFile(char fileName[], char buffer[]) {
 int executeProgram(char* name) {
   char error[27];
   char maxProcs[24];
-  char buffer[13312];
+  char buffer[MAX_BUFFER_SIZE];
   int index;
   int processTableIndex;
   int segment;
@@ -318,7 +324,7 @@ int executeProgram(char* name) {
   maxProcs[23] = '\0';
 
   /* Initalize array with 0. */
-  for (index = 0; index < 13312; index++) {
+  for (index = 0; index < MAX_BUFFER_SIZE; index++) {
     buffer[index] = 0x00;
   }
 
@@ -333,7 +339,7 @@ int executeProgram(char* name) {
 
   /* Find inactive and nonwaiting slot. */
   setKernelDataSegment();
-  for (processTableIndex = 0; processTableIndex < 8; processTableIndex++) {
+  for (processTableIndex = 0; processTableIndex < PROCESS_TABLE_SIZE; processTableIndex++) {
     if (processTable[processTableIndex].isActive == 0 && processTable[processTableIndex].waiting == -1) {
       processTable[processTableIndex].sp = 0xff00;
       break;
@@ -342,14 +348,14 @@ int executeProgram(char* name) {
   restoreDataSegment();
 
   /* Check that process limit has not been reached. */
-  if (processTableIndex == 8) {
+  if (processTableIndex == PROCESS_TABLE_SIZE) {
     printString(maxProcs);
-    return;
+    return -1;
   }
 
   /* Put data into memory. */
   segment = (processTableIndex + 2) * 0x1000;
-  for (index = 0; index < 13312; index++) {
+  for (index = 0; index < MAX_BUFFER_SIZE; index++) {
     putInMemory(segment, index, buffer[index]);
   }
 
@@ -366,7 +372,6 @@ int executeProgram(char* name) {
 
 void terminate() {
   setKernelDataSegment();
-  debugPrint(currentProcess + '0');
   processTable[currentProcess].isActive = 0;
   restoreDataSegment();
   while(1) {}
@@ -394,8 +399,8 @@ void writeSector(char* buffer, int sector) {
 }
 
 void deleteFile(char* fileName) {
-  char directory[513];
-  char map[513];
+  char directory[SECTOR_SIZE];
+  char map[SECTOR_SIZE];
   int index;
   int strIndex;
   int sectors[26];
@@ -409,10 +414,10 @@ void deleteFile(char* fileName) {
   sectorsLen = 0;
 
   /* Read the directory and map. */
-  readSector(directory, 2);
-  readSector(map, 1);
+  readSector(directory, DIRECTORY_SECTOR);
+  readSector(map, MAP_SECTOR);
 
-  for (index = 0; index < 513; index = index + 32) {
+  for (index = 0; index < SECTOR_SIZE; index = index + 32) {
     /* Find matching file name in directory. */
     for (strIndex = 0; strIndex < 6; strIndex++) {
       if (fileName[strIndex] != directory[index + strIndex]) {
@@ -427,7 +432,6 @@ void deleteFile(char* fileName) {
 
     /* Found fileName. */
     if (isFound) {
-
       /* Get sectors. */
       for (indexRead = 0; indexRead < 32; indexRead++) {
         if (directory[index + indexRead] == 0x00) {
@@ -446,17 +450,17 @@ void deleteFile(char* fileName) {
 
   /* Clear map sectors */
   for (index = 0; index < sectorsLen; index++) {
-    map[sectors[index] - 1] = 0x00; /* is this right? */
+    map[sectors[index] - 1] = 0x00;
   }
 
   /* Write directory and map back to memory */
-  writeSector(directory, 2);
-  writeSector(map, 1);
+  writeSector(directory, DIRECTORY_SECTOR);
+  writeSector(map, MAP_SECTOR);
 }
 
 void writeFile(char* fileName, char* buffer, int numberSectors) {
-  char directory[513];
-  char map[513];
+  char directory[SECTOR_SIZE];
+  char map[SECTOR_SIZE];
   int dirIndex;
   int fileIndex;
   int mapIndex;
@@ -471,10 +475,10 @@ void writeFile(char* fileName, char* buffer, int numberSectors) {
   isFound = 0;
 
   /* Read directory and map.  */
-  readSector(directory, 2);
-  readSector(map, 1);
+  readSector(directory, DIRECTORY_SECTOR);
+  readSector(map, MAP_SECTOR);
 
-  while (dirIndex < 513) {
+  while (dirIndex < SECTOR_SIZE) {
     /* Find an empty space in the directory */
     if (directory[dirIndex] == 0x00) {
       /* Write the first 6 characters of the filename */
@@ -491,7 +495,7 @@ void writeFile(char* fileName, char* buffer, int numberSectors) {
 
       /* Find sectors to write, add to the directory, and update map. */
       for (sectorWrite = 0; sectorWrite < numberSectors; sectorWrite++) {
-        while (mapIndex < 513) {
+        for (mapIndex = 0; mapIndex < SECTOR_SIZE; mapIndex++) {
           if (map[mapIndex] == 0x00) {
             /* Mark map as used and set directory to map value */
             map[mapIndex] = 0xFF;
@@ -504,7 +508,6 @@ void writeFile(char* fileName, char* buffer, int numberSectors) {
             /* Leave map loop */
             break;
           }
-          mapIndex++;
         }
       }
 
@@ -526,8 +529,8 @@ void writeFile(char* fileName, char* buffer, int numberSectors) {
   }
 
   /* Write directory and map back to memory */
-  writeSector(directory, 2);
-  writeSector(map, 1);
+  writeSector(directory, DIRECTORY_SECTOR);
+  writeSector(map, MAP_SECTOR);
 }
 
 void handleTimerInterrupt(int segment, int sp) {
@@ -541,27 +544,26 @@ void handleTimerInterrupt(int segment, int sp) {
   setKernelDataSegment();
   nextSegment = segment;
   nextStackPointer = sp;
-  nextProcess = div(nextSegment, 0x1000) - 2;
-
-
+  nextProcess = div(segment, 0x1000) - 2;
 
   if (nextProcess >= 0) {
     processTable[nextProcess].sp = sp;
   }
 
-  for (i = 1; i <= 8; i++) {
-    nextProcess = mod(currentProcess + i, 8);
+  for (i = 1; i <= PROCESS_TABLE_SIZE; i++) {
+    nextProcess = mod(currentProcess + i, PROCESS_TABLE_SIZE);
     currentWaitStatus = processTable[nextProcess].waiting;
 
+    /* Is the current process waiting? */
     if (currentWaitStatus != -1) {
       isWaitingOn = processTable[currentWaitStatus];
       /* Is the thing I am waiting on "inactive" and not waiting on other things? */
+      /* If so, I can run. Otherwise, move on */
       if (isWaitingOn.isActive == 0 && isWaitingOn.waiting == -1) {
         processTable[nextProcess].isActive = 1;
         processTable[nextProcess].waiting = -1;
       }
     }
-
 
     if (processTable[nextProcess].isActive == 1) {
       currentProcess = nextProcess;
@@ -570,16 +572,13 @@ void handleTimerInterrupt(int segment, int sp) {
       break;
     }
   }
+
   restoreDataSegment();
   returnFromTimer(nextSegment, nextStackPointer);
 }
 
 void killProcess(int processID) {
-  if (processID < 0) {
-    debugPrint('z');
-    return;
-  } else if (processID > 7) {
-    debugPrint('s');
+  if (processID < 0 || processID > 7) {
     return;
   }
 
@@ -590,8 +589,8 @@ void killProcess(int processID) {
 
 void stallShell(int processID) {
   setKernelDataSegment();
-  processTable[0].waiting = processID;
-  processTable[0].isActive = 0;
+  processTable[SHELL_ID].waiting = processID;
+  processTable[SHELL_ID].isActive = 0;
   restoreDataSegment();
 }
 

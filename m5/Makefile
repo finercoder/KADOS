@@ -38,6 +38,7 @@ floppya: kernel message.txt bootload loadFile shell
 	./loadFile tstprg
 	./loadFile tstpr2
 	./loadFile shell
+	./loadFile phello
 
 clean:
 	rm -f *.o kernel shell loadFile bootload bochsout.txt floppya.img

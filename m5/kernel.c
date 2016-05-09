@@ -12,6 +12,7 @@ void deleteFile(char* fileName);
 void writeFile(char* fileName, char* buffer, int numberSectors);
 void handleTimerInterrupt(int segment, int sp);
 
+/* Prints a given character */
 void debugPrint(char printThis);
 
 struct ProcessEntry {
@@ -34,27 +35,22 @@ int main() {
   shell[4] = 'l';
   shell[5] = '\0';
 
-  /*
-  Initialize global variables.
-  */
-  setKernelDataSegment();
-  currentProcess = -1;
+  /* Initialize global variables. */
   for (i = 0; i < 8; i++) {
     processTable[i].isActive = 0;
     processTable[i].sp = 0xff00;
   }
-  restoreDataSegment();
+  currentProcess = -1;
 
-  /*
-    Set InterruptS.
-  */
+  /* Set Interrupts. */
   makeInterrupt21();
   makeTimerInterrupt();
 
-  /*
-    Execute Shell.
-  */
+  /* Execute Shell. */
   interrupt(0x21, 4, shell, 0x2000, 0);
+
+  while(1) {
+  }
 }
 
 void printString(char string[]) {
@@ -127,23 +123,6 @@ void readString(char stringArr[]) {
   stringArr[index] = '\0';
 }
 
-int mod(int a, int b) {
-  while (a >= b) {
-    a = a - b;
-  }
-
-  return a;
-}
-
-int div(int a, int b) {
-  int quotient = 0;
-
-  while ((quotient + 1) * b <= a) {
-    quotient = quotient + 1;
-  }
-
-  return quotient;
-}
 
 void readSector(char* buffer, int sector) {
   int relativeSector;
@@ -221,12 +200,6 @@ void readFile(char fileName[], char buffer[]) {
   int sectorsLen;
   int strLen;
 
-  char s1[4];
-
-  s1[1] = '\r';
-  s1[2] = '\n';
-  s1[3] = '\0';
-
   /* Initalize variables */
   index = 0;
   isFound = 0;
@@ -273,19 +246,13 @@ void readFile(char fileName[], char buffer[]) {
 }
 
 void executeProgram(char* name) {
-  char buffer[13312];
   char error[27];
   char maxProcs[24];
+  char buffer[13312];
   int index;
-  int bufferIndex;
-  int isFound;
-  char current;
-
-  setKernelDataSegment();
-
-  isFound = 0;
-  bufferIndex = 0;
-
+  int processTableIndex;
+  int segment;
+  int t;
 
   /* Set up error string. */
   error[0] = 'E';
@@ -342,65 +309,81 @@ void executeProgram(char* name) {
   maxProcs[23] = '\0';
 
   /* Initalize array with 0. */
-  for (bufferIndex = 0; bufferIndex < 13312; bufferIndex++) {
-    buffer[bufferIndex] = 0x00;
+  for (index = 0; index < 13312; index++) {
+    buffer[index] = 0x00;
   }
-  bufferIndex = 0;
 
   /* Reset index and Get file and set current. */
   index = 0;
   readFile(name, buffer);
-  current = buffer[index];
 
-/*
-Check if these chacters match the shell.
-debugPrint(buffer[3]);
-debugPrint(buffer[4]);
-
-*/
-
-  /* OLD: Put data into memory. */
-/*
-  while (index < 13312) {
-    putInMemory(segment, index, current);
-    current = buffer[++index];
+  if (buffer[0] == '\0') {
+    printString(error);
+    return;
   }
-*/
 
-  /* If found launch, else terminate. */
+  setKernelDataSegment();
+  for (processTableIndex = 0; processTableIndex < 8; processTableIndex++) {
+    if (processTable[processTableIndex].isActive == 0) {
+      processTable[processTableIndex].sp = 0xff00;
+      t = processTableIndex;
+      break;
+    }
+  }
+  restoreDataSegment();
+
+  if (t == 8) {
+    printString(maxProcs);
+    return;
+  }
+
+
+  segment = (t + 2) * 0x1000;
+  for (index = 0; index < 13312; index++) {
+    putInMemory(segment, index, buffer[index]);
+  }
+
+  initializeProgram(segment);
+
+  setKernelDataSegment();
+  processTable[t].isActive = 1;
+  currentProcess = t;
+  restoreDataSegment();
+
+
+
+/* OLD STUFF
+
+  If found launch, else terminate.
   if (buffer[0] != '\0') {
     for (index = 0; index < 8; index++) {
+      setKernelDataSegment();
       if (processTable[index].isActive == 0) {
-/*
-debugPrint(buffer[0]);
-*/
-        /* Put data into memory. */
-        while (bufferIndex < 13312) {
-/*
-debugPrint(current);
-*/
-          putInMemory((index + 2) * 0x1000, bufferIndex, current);
-          current = buffer[++bufferIndex];
-        }
-        processTable[index].isActive = 1;
-        currentProcess = index;
-        initializeProgram((index + 2) * 0x1000);
-        // launchProgram((index + 2) * 0x1000);
         restoreDataSegment();
 
-        /*
-          debugPrint(processTable[index].isActive + '0');
-        */
+         Put data into memory.
+        for (bufferIndex = 0; bufferIndex < 13312; bufferIndex++) {
+          putInMemory((index + 2) * 0x1000, bufferIndex, buffer[bufferIndex]);
+        }
+
+        setKernelDataSegment();
+        processTable[index].isActive = 1;
+        currentProcess = index;
+        restoreDataSegment();
+        initializeProgram((index + 2) * 0x1000);
+        // launchProgram((index + 2) * 0x1000);
+
         return;
+        restoreDataSegment();
       }
     }
     printString(maxProcs);
-    restoreDataSegment();
     return;
   } else {
     restoreDataSegment();
     terminate();
   }
+*/
 }
 
 void terminate() {
@@ -580,52 +563,39 @@ void writeFile(char* fileName, char* buffer, int numberSectors) {
 }
 
 void handleTimerInterrupt(int segment, int sp) {
-  int processIndex;
-  char ticBuffer[6];
-  int offset;
+  int i;
+  int nextProcess;
+  int nextSegment;
+  int nextStackPointer;
 
   setKernelDataSegment();
+  nextSegment = segment;
+  nextStackPointer = sp;
+  nextProcess = div(nextSegment, 0x1000) - 2;
 
-  ticBuffer[0] = 'T';
-  ticBuffer[1] = 'i';
-  ticBuffer[2] = 'c';
-  ticBuffer[3] = '\r';
-  ticBuffer[4] = '\n';
-  ticBuffer[5] = '\0';
-
-  if (currentProcess == -1) {
-    restoreDataSegment();
-    returnFromTimer(segment, sp);
+  if (nextProcess >= 0) {
+    processTable[nextProcess].sp = sp;
   }
 
-  processTable[currentProcess].sp = sp;
-  for (processIndex = 1; processIndex < 8; processIndex++) {
-    offset = mod(currentProcess + processIndex, 8);
-    /*
-      debugPrint(processTable[offset].isActive + '0');
-    */
-    if (processTable[mod(currentProcess + processIndex, 8)].isActive) {
-      debugPrint('S');
-      currentProcess = processIndex;
-      segment = (currentProcess + 2) * 0x1000;
-      sp = processTable[currentProcess].sp;
+  for (i = 1; i <= 8; i++) {
+    nextProcess = mod(currentProcess + i, 8);
+
+    if (processTable[nextProcess].isActive == 1) {
+      currentProcess = nextProcess;
+      nextSegment = (currentProcess + 2) * 0x1000;
+      nextStackPointer = processTable[currentProcess].sp;
       break;
     }
   }
-
-/*
-  printString(ticBuffer);
-*/
-
-/*
-print Stack pointer.
-debugPrint(sp + '0');
-*/
-restoreDataSegment();
-  returnFromTimer(segment, sp);
-
+  restoreDataSegment();
+  returnFromTimer(nextSegment, nextStackPointer);
 }
 
+/* ----------Utilities --------------------------*/
+
+/*
+  Print a single character for debugging.
+*/
 void debugPrint(char printThis) {
   char debugString[4];
 
@@ -635,4 +605,28 @@ void debugPrint(char printThis) {
   debugString[3] = '\0';
 
   printString(debugString);
+}
+
+/*
+  Modulus operator.
+*/
+int mod(int a, int b) {
+  while (a >= b) {
+    a = a - b;
+  }
+
+  return a;
+}
+
+/*
+Integer Division.
+*/
+int div(int a, int b) {
+  int quotient = 0;
+
+  while ((quotient + 1) * b <= a) {
+    quotient = quotient + 1;
+  }
+
+  return quotient;
 }

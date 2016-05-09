@@ -26,6 +26,8 @@ int main() {
 	shell[6] = ' ';
 	shell[7] = '\0';
 
+	enableInterrupts();
+	
 	/* Initialize the input array. */
 	for (i = 0; i < 513; i++) {
 		input[i] = '\0';
@@ -228,12 +230,12 @@ void copy(char input[]) {
 	}
 
 	/* get directory */
-	
+
 	if (isInDirectory(fileName)) {
 		interrupt(0x21, 0, duplicateError, 0, 0);
 		return;
 	}
-	
+
 
 	/* Copy */
 	interrupt(0x21, 8, fileName, data, sectorNumbers);

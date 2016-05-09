@@ -5,12 +5,14 @@ int mod(int a, int b);
 int div(int a, int b);
 void handleInterrupt21(int ax, int bx, int cx, int dx);
 void readFile(char stringArr[]);
-void executeProgram(char* name, int segment);
+int executeProgram(char* name);
 void terminate();
 void writeSector(char* buffer, int sector);
 void deleteFile(char* fileName);
 void writeFile(char* fileName, char* buffer, int numberSectors);
 void handleTimerInterrupt(int segment, int sp);
+void killProcess(int processID);
+void stallShell(int processID);
 
 /* Prints a given character */
 void debugPrint(char printThis);
@@ -18,6 +20,7 @@ void debugPrint(char printThis);
 struct ProcessEntry {
   int isActive;
   int sp;
+  int waiting; /* -1 no wait otherwise it is the processID of the process it waiting on.*/
 };
 
 struct ProcessEntry processTable[8];
@@ -39,6 +42,7 @@ int main() {
   for (i = 0; i < 8; i++) {
     processTable[i].isActive = 0;
     processTable[i].sp = 0xff00;
+    processTable[i].waiting = -1;
   }
   currentProcess = -1;
 
@@ -185,6 +189,10 @@ void handleInterrupt21(int ax, int bx, int cx, int dx) {
     deleteFile(bx);
   } else if (ax == 8) {
     writeFile(bx, cx, dx);
+  } else if (ax == 9) {
+    killProcess(bx);
+  } else if (ax == 10) {
+    stallShell(executeProgram(bx));
   } else {
     printString(error);
   }
@@ -245,14 +253,13 @@ void readFile(char fileName[], char buffer[]) {
   }
 }
 
-void executeProgram(char* name) {
+int executeProgram(char* name) {
   char error[27];
   char maxProcs[24];
   char buffer[13312];
   int index;
   int processTableIndex;
   int segment;
-  int t;
 
   /* Set up error string. */
   error[0] = 'E';
@@ -322,83 +329,42 @@ void executeProgram(char* name) {
     return;
   }
 
+  /* Find inactive and nonwaiting slot. */
   setKernelDataSegment();
   for (processTableIndex = 0; processTableIndex < 8; processTableIndex++) {
-    if (processTable[processTableIndex].isActive == 0) {
+    if (processTable[processTableIndex].isActive == 0 && processTable[processTableIndex].waiting == -1) {
       processTable[processTableIndex].sp = 0xff00;
-      t = processTableIndex;
       break;
     }
   }
   restoreDataSegment();
 
-  if (t == 8) {
+  /* Check that process limit has not been reached. */
+  if (processTableIndex == 8) {
     printString(maxProcs);
     return;
   }
 
-
-  segment = (t + 2) * 0x1000;
+  /* Put data into memory. */
+  segment = (processTableIndex + 2) * 0x1000;
   for (index = 0; index < 13312; index++) {
     putInMemory(segment, index, buffer[index]);
   }
 
+  /* Initialize Registers */
   initializeProgram(segment);
 
+  /* Set active bit and currentProcess global. */
   setKernelDataSegment();
-  processTable[t].isActive = 1;
-  currentProcess = t;
+  processTable[processTableIndex].isActive = 1;
+  currentProcess = processTableIndex;
   restoreDataSegment();
-
-
-
-/* OLD STUFF
-
-  If found launch, else terminate.
-  if (buffer[0] != '\0') {
-    for (index = 0; index < 8; index++) {
-      setKernelDataSegment();
-      if (processTable[index].isActive == 0) {
-        restoreDataSegment();
-
-         Put data into memory.
-        for (bufferIndex = 0; bufferIndex < 13312; bufferIndex++) {
-          putInMemory((index + 2) * 0x1000, bufferIndex, buffer[bufferIndex]);
-        }
-
-        setKernelDataSegment();
-        processTable[index].isActive = 1;
-        currentProcess = index;
-        restoreDataSegment();
-        initializeProgram((index + 2) * 0x1000);
-        // launchProgram((index + 2) * 0x1000);
-
-        return;
-        restoreDataSegment();
-      }
-    }
-    printString(maxProcs);
-    return;
-  } else {
-    restoreDataSegment();
-    terminate();
-  }
-*/
+  return processTableIndex;
 }
 
 void terminate() {
-  char shell[6];
-
-  /* Set up shell string. */
-  shell[0] = 's';
-  shell[1] = 'h';
-  shell[2] = 'e';
-  shell[3] = 'l';
-  shell[4] = 'l';
-  shell[5] = '\0';
-
-debugPrint('T');
   setKernelDataSegment();
+  debugPrint(currentProcess + '0');
   processTable[currentProcess].isActive = 0;
   restoreDataSegment();
   while(1) {}
@@ -567,6 +533,8 @@ void handleTimerInterrupt(int segment, int sp) {
   int nextProcess;
   int nextSegment;
   int nextStackPointer;
+  int currentWaitStatus;
+  struct ProcessEntry isWaitingOn;
 
   setKernelDataSegment();
   nextSegment = segment;
@@ -579,6 +547,17 @@ void handleTimerInterrupt(int segment, int sp) {
 
   for (i = 1; i <= 8; i++) {
     nextProcess = mod(currentProcess + i, 8);
+    currentWaitStatus = processTable[nextProcess].waiting;
+
+    if (currentWaitStatus != -1) {
+      isWaitingOn = processTable[currentWaitStatus];
+      /* Is the thing I am waiting on "inactive" and not waiting on other things? */
+      if (isWaitingOn.isActive == 0 && isWaitingOn.waiting == -1) {
+        processTable[nextProcess].isActive = 1;
+        processTable[nextProcess].waiting = -1;
+      }
+    }
+
 
     if (processTable[nextProcess].isActive == 1) {
       currentProcess = nextProcess;
@@ -589,6 +568,27 @@ void handleTimerInterrupt(int segment, int sp) {
   }
   restoreDataSegment();
   returnFromTimer(nextSegment, nextStackPointer);
+}
+
+void killProcess(int processID) {
+  if (processID < 0) {
+    debugPrint('z');
+    return;
+  } else if (processID > 7) {
+    debugPrint('s');
+    return;
+  }
+
+  setKernelDataSegment();
+  processTable[processID].isActive = 0;
+  restoreDataSegment();
+}
+
+void stallShell(int processID) {
+  setKernelDataSegment();
+  processTable[0].waiting = processID;
+  processTable[0].isActive = 0;
+  restoreDataSegment();
 }
 
 /* ----------Utilities --------------------------*/

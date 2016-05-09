@@ -1,6 +1,7 @@
 /* Helper methods */
 int getNumSect(char fileName[]);
 int mod(int a, int b);
+void debugPrint(char printChar);
 
 /* Command methods */
 void type(char input[]);
@@ -9,6 +10,8 @@ void deleteFile(char input[]);
 void copy(char inputPtr[]);
 void printDirectory();
 void create(char fileName[]);
+void kill(char processIDChar[]);
+void execForground(char input[]);
 void error();
 
 int main() {
@@ -27,7 +30,7 @@ int main() {
 	shell[7] = '\0';
 
 	enableInterrupts();
-	
+
 	/* Initialize the input array. */
 	for (i = 0; i < 513; i++) {
 		input[i] = '\0';
@@ -62,6 +65,14 @@ int main() {
 		/* create command */
 		}	else if (input[0] == 'c' && input[1] == 'r' && input[2] == 'e' && input[3] == 'a' && input[4] == 't' && input[5] == 'e' && input[6] == ' ') {
 			create(&(input[7]));
+
+		/* kill command */
+		} else if (input[0] == 'k' && input[1] == 'i' && input[2] == 'l' && input[3] == 'l' && input[4] == ' ') {
+			kill(&(input[5]));
+
+		/* execForeground command */
+		} else if (input[0] == 'e' && input[1] == 'x' && input[2] == 'e' && input[3] == 'c' && input[4] == 'f' && input[5] == 'o' && input[6] == 'r' && input[7] == 'e' && input[8] == 'g' && input[9] == 'r' && input[10] == 'o' && input[11] == 'u' && input[12] == 'n' && input[13] == 'd' && input[14] == ' ') {
+			execForground(input);
 
 		/* no command found. */
 		} else {
@@ -412,6 +423,21 @@ void create(char fileName[]) {
 }
 
 /*
+	Kill a process
+*/
+void kill(char processIDChar[]) {
+	int processID;
+
+	processID = processIDChar[0] - '0';
+
+	interrupt(0x21, 9, processID, 0, 0);
+}
+
+void execForground(char input[]) {
+	interrupt(0x21, 10, &(input[15]), 0x2000, 0);
+}
+
+/*
 	Prints an error message.
 */
 void error() {
@@ -433,6 +459,20 @@ void error() {
 	error[13] = '\0';
 
 	interrupt(0x21, 0, error, 0, 0);
+}
+
+/*
+	Prints a debug string with a given character.
+*/
+void debugPrint(char printChar) {
+	char debugString[4];
+
+	debugString[0] = printChar;
+	debugString[1] = '\r';
+	debugString[2] = '\n';
+	debugString[3] = '\0';
+
+	interrupt(0x21, 0, debugString, 0, 0);
 }
 
 int mod(int a, int b) {

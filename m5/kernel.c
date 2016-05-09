@@ -26,6 +26,8 @@ struct ProcessEntry {
 struct ProcessEntry processTable[8];
 int currentProcess;
 
+
+
 int main() {
   int i;
   char shell[6];
@@ -53,6 +55,7 @@ int main() {
   /* Execute Shell. */
   interrupt(0x21, 4, shell, 0x2000, 0);
 
+  /* Wait for interrupts. */
   while(1) {
   }
 }
@@ -126,7 +129,6 @@ void readString(char stringArr[]) {
   stringArr[index++] = '\n';
   stringArr[index] = '\0';
 }
-
 
 void readSector(char* buffer, int sector) {
   int relativeSector;
@@ -540,6 +542,8 @@ void handleTimerInterrupt(int segment, int sp) {
   nextSegment = segment;
   nextStackPointer = sp;
   nextProcess = div(nextSegment, 0x1000) - 2;
+
+
 
   if (nextProcess >= 0) {
     processTable[nextProcess].sp = sp;

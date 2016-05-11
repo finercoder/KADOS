@@ -1,5 +1,6 @@
 kernel.c
 ==============
+- On boot, the kernel prints an ASCII logo.
 - The kernel.c file makes an interrupt (interrupt 0x21) and starts our shell in its own process.
 - It can run up to 8 process at a time through a scheduler using round robin
 - It also defines such functions as printString(), readString(), mod(), div(), readSector(), and other utilities.
@@ -12,7 +13,7 @@ shell.c
   - you can change the background color of the terminal with "bgcolor" then a color (black, blue, cyan, red, purple, gray, lime, teal, orange); at startup you default to black. WARNING: SETTING COLOR TO GRAY IS NOT ADVISED SINCE THE TEXT IS GRAY
   - you can clear the terminal screen by typing "clear"
   - you can enter "ps" to display the pids that are currently active
-  - when you perform a "dir" the shell prints out the names of all programs in the directory as well as the amount of sectors they each take up with column labels
+  - when you perform a "dir" (or "ls") the shell prints out the names of all programs in the directory as well as the amount of sectors they each take up with column labels
 
 Testing
 ==============

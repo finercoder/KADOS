@@ -1,4 +1,3 @@
-
 void printString(char* string);
 void readString(char stringArr[]);
 void readSector(char* buffer, int sector);
@@ -16,6 +15,7 @@ void killProcess(int processID);
 void stallShell(int processID);
 void printProcessTable();
 void clearTerminal();
+void printLogo();
 
 /* Prints a given character */
 void debugPrint(char printThis);
@@ -39,8 +39,8 @@ int currentProcess;
 int main() {
   int i;
   char shell[6];
-  char welcome[21];
 
+  printLogo();
   /* Set up shell string. */
   shell[0] = 's';
   shell[1] = 'h';
@@ -48,29 +48,6 @@ int main() {
   shell[3] = 'l';
   shell[4] = 'l';
   shell[5] = '\0';
-
-  /* Set up welcome message. */
-  welcome[0] = 'W';
-  welcome[1] = 'e';
-  welcome[2] = 'l';
-  welcome[3] = 'c';
-  welcome[4] = 'o';
-  welcome[5] = 'm';
-  welcome[6] = 'e';
-  welcome[7] = ' ';
-  welcome[8] = 't';
-  welcome[9] = 'o';
-  welcome[10] = ' ';
-  welcome[11] = 'K';
-  welcome[12] = 'A';
-  welcome[13] = 'D';
-  welcome[14] = ' ';
-  welcome[15] = 'O';
-  welcome[16] = 'S';
-  welcome[17] = '!';
-  welcome[18] = '\r';
-  welcome[19] = '\n';
-  welcome[20] = '\0';
 
   /* Initialize global variables. */
   for (i = 0; i < PROCESS_TABLE_SIZE; i++) {
@@ -82,7 +59,6 @@ int main() {
 
   /* Set Interrupts. */
   makeInterrupt21();
-  interrupt(0x21, 0, welcome, 0, 0);
   makeTimerInterrupt();
 
 
@@ -233,6 +209,10 @@ void handleInterrupt21(int ax, int bx, int cx, int dx) {
     printProcessTable();
   } else if (ax == 12) {
     clearTerminal();
+  } else if (ax == 13) {
+
+  } else if (ax == 14) {
+    printLogo();
   } else {
     printString(error);
   }
@@ -661,6 +641,151 @@ void clearTerminal() {
   }
   interrupt(0x10, 0x200, 0, 0, 0);
   interrupt(0x10, 0x4200, 0, 0, 0);
+}
+
+void printLogo() {
+  char l1[32];
+  char l2[32];
+  char l3[32];
+  char l4[32];
+
+  l1[0] = ' ';
+  l1[1] = ' ';
+  l1[2] = '_';
+  l1[3] = ' ';
+  l1[4] = ' ';
+  l1[5] = '_';
+  l1[6] = '_';
+  l1[7] = ' ';
+  l1[8] = ' ';
+  l1[9] = ' ';
+  l1[10] = '_';
+  l1[11] = ' ';
+  l1[12] = ' ';
+  l1[13] = ' ';
+  l1[14] = '_';
+  l1[15] = '_';
+  l1[16] = '_';
+  l1[17] = ' ';
+  l1[18] = ' ';
+  l1[19] = ' ';
+  l1[20] = '_';
+  l1[21] = '_';
+  l1[22] = '_';
+  l1[23] = ' ';
+  l1[24] = ' ';
+  l1[25] = '_';
+  l1[26] = '_';
+  l1[27] = '_';
+  l1[28] = ' ';
+  l1[29] = '\r';
+  l1[30] = '\n';
+  l1[31] = '\0';
+
+  l2[0] = ' ';
+  l2[1] = '|';
+  l2[2] = ' ';
+  l2[3] = '|';
+  l2[4] = '/';
+  l2[5] = ' ';
+  l2[6] = '/';
+  l2[7] = ' ';
+  l2[8] = ' ';
+  l2[9] = '/';
+  l2[10] = '_';
+  l2[11] = '\\';
+  l2[12] = ' ';
+  l2[13] = '|';
+  l2[14] = ' ';
+  l2[15] = ' ';
+  l2[16] = ' ';
+  l2[17] = '\\';
+  l2[18] = ' ';
+  l2[19] = '/';
+  l2[20] = ' ';
+  l2[21] = '_';
+  l2[22] = ' ';
+  l2[23] = '\\';
+  l2[24] = '/';
+  l2[25] = ' ';
+  l2[26] = '_';
+  l2[27] = '_';
+  l2[28] = '|';
+  l2[29] = '\r';
+  l2[30] = '\n';
+  l2[31] = '\0';
+
+  l3[0] = ' ';
+  l3[1] = '|';
+  l3[2] = ' ';
+  l3[3] = '\'';
+  l3[4] = ' ';
+  l3[5] = '<';
+  l3[6] = ' ';
+  l3[7] = ' ';
+  l3[8] = '/';
+  l3[9] = ' ';
+  l3[10] = '_';
+  l3[11] = ' ';
+  l3[12] = '\\';
+  l3[13] = '|';
+  l3[14] = ' ';
+  l3[15] = '|';
+  l3[16] = ')';
+  l3[17] = ' ';
+  l3[18] = '|';
+  l3[19] = ' ';
+  l3[20] = '(';
+  l3[21] = '_';
+  l3[22] = ')';
+  l3[23] = ' ';
+  l3[24] = '\\';
+  l3[25] = '_';
+  l3[26] = '_';
+  l3[27] = ' ';
+  l3[28] = '\\';
+  l3[29] = '\0';
+  l3[29] = '\r';
+  l3[30] = '\n';
+  l3[31] = '\0';
+
+  l4[0] = ' ';
+  l4[1] = '|';
+  l4[2] = '_';
+  l4[3] = '|';
+  l4[4] = '\\';
+  l4[5] = '_';
+  l4[6] = '\\';
+  l4[7] = '/';
+  l4[8] = '_';
+  l4[9] = '/';
+  l4[10] = ' ';
+  l4[11] = '\\';
+  l4[12] = '_';
+  l4[13] = '\\';
+  l4[14] = '_';
+  l4[15] = '_';
+  l4[16] = '_';
+  l4[17] = '/';
+  l4[18] = ' ';
+  l4[19] = '\\';
+  l4[20] = '_';
+  l4[21] = '_';
+  l4[22] = '_';
+  l4[23] = '/';
+  l4[24] = '|';
+  l4[25] = '_';
+  l4[26] = '_';
+  l4[27] = '_';
+  l4[28] = '/';
+  l4[29] = '\r';
+  l4[30] = '\n';
+  l4[31] = '\0';
+
+  printString(l1);
+  printString(l2);
+  printString(l3);
+  printString(l4);
 }
 
 /* ----------Utilities --------------------------*/

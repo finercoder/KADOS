@@ -1,4 +1,3 @@
-
 /* Helper methods */
 int getNumSect(char fileName[]);
 int mod(int a, int b);

@@ -9,25 +9,31 @@ kernel: kernel.o kernel_asm.o
 kernel.o: kernel.c
 	bcc -ansi -c -o kernel.o kernel.c
 
-loadFile: loadFile.c
-	gcc loadFile.c -o loadFile
-
 kernel_asm.o: kernel.asm
 	as86 kernel.asm -o kernel_asm.o
-
-bootload: bootload.asm
-	nasm bootload.asm
-
-shell.o: shell.c
-	bcc -ansi -c -o shell.o shell.c
-
-lib.o: lib.asm
-	as86 lib.asm -o lib.o
 
 shell: lib.o shell.o
 	ld86 -o shell -d shell.o lib.o
 
-floppya: kernel message.txt bootload loadFile shell
+shell.o: shell.c
+	bcc -ansi -c -o shell.o shell.c
+
+slowPrint: lib.o slowPrint.o
+	ld86 -o slowPrint -d slowPrint.o lib.o
+
+slowPrint.o: slowPrint.c
+	bcc -ansi -c -o slowPrint.o slowPrint.c
+
+bootload: bootload.asm
+	nasm bootload.asm
+
+lib.o: lib.asm
+	as86 lib.asm -o lib.o
+
+loadFile: loadFile.c
+	gcc loadFile.c -o loadFile
+
+floppya: kernel message.txt bootload loadFile shell slowPrint
 	dd if=/dev/zero of=floppya.img bs=512 count=2880
 	dd if=bootload of=floppya.img bs=512 count=1 conv=notrunc
 	dd if=map.img of=floppya.img bs=512 count=1 seek=1 conv=notrunc
@@ -39,6 +45,7 @@ floppya: kernel message.txt bootload loadFile shell
 	./loadFile tstpr2
 	./loadFile shell
 	./loadFile phello
+	./loadFile slowPrint
 
 clean:
-	rm -f *.o kernel shell loadFile bootload bochsout.txt floppya.img
+	rm -f *.o kernel shell loadFile bootload bochsout.txt floppya.img slowPrint

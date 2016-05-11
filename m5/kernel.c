@@ -13,6 +13,8 @@ void writeFile(char* fileName, char* buffer, int numberSectors);
 void handleTimerInterrupt(int segment, int sp);
 void killProcess(int processID);
 void stallShell(int processID);
+void printProcessTable();
+void clearTerminal();
 
 /* Prints a given character */
 void debugPrint(char printThis);
@@ -36,6 +38,7 @@ int currentProcess;
 int main() {
   int i;
   char shell[6];
+  char welcome[21];
 
   /* Set up shell string. */
   shell[0] = 's';
@@ -44,6 +47,29 @@ int main() {
   shell[3] = 'l';
   shell[4] = 'l';
   shell[5] = '\0';
+
+  /* Set up welcome message. */
+  welcome[0] = 'W';
+  welcome[1] = 'e';
+  welcome[2] = 'l';
+  welcome[3] = 'c';
+  welcome[4] = 'o';
+  welcome[5] = 'm';
+  welcome[6] = 'e';
+  welcome[7] = ' ';
+  welcome[8] = 't';
+  welcome[9] = 'o';
+  welcome[10] = ' ';
+  welcome[11] = 'K';
+  welcome[12] = 'A';
+  welcome[13] = 'D';
+  welcome[14] = ' ';
+  welcome[15] = 'O';
+  welcome[16] = 'S';
+  welcome[17] = '!';
+  welcome[18] = '\r';
+  welcome[19] = '\n';
+  welcome[20] = '\0';
 
   /* Initialize global variables. */
   for (i = 0; i < PROCESS_TABLE_SIZE; i++) {
@@ -55,7 +81,9 @@ int main() {
 
   /* Set Interrupts. */
   makeInterrupt21();
+  interrupt(0x21, 0, welcome, 0, 0);
   makeTimerInterrupt();
+
 
   /* Execute Shell. */
   interrupt(0x21, 4, shell, 0x2000, 0);
@@ -200,6 +228,10 @@ void handleInterrupt21(int ax, int bx, int cx, int dx) {
     killProcess(bx);
   } else if (ax == 10) {
     stallShell(executeProgram(bx));
+  } else if (ax == 11) {
+    printProcessTable();
+  } else if (ax == 12) {
+    clearTerminal();
   } else {
     printString(error);
   }
@@ -592,6 +624,42 @@ void stallShell(int processID) {
   processTable[SHELL_ID].waiting = processID;
   processTable[SHELL_ID].isActive = 0;
   restoreDataSegment();
+}
+
+void printProcessTable() {
+  int processID;
+  char processString[4];
+
+  processID = 0;
+  processString[1] = '\r';
+  processString[2] = '\n';
+  processString[3] = '\0';
+  while (processID < 8) {
+    setKernelDataSegment();
+    if (processTable[processID].isActive) {
+      restoreDataSegment();
+      processString[0] = processID + '0';
+      printString(processString);
+      setKernelDataSegment();
+    }
+    restoreDataSegment();
+    processID++;
+  }
+}
+
+void clearTerminal() {
+  int i;
+  char blankLine[3];
+
+  blankLine[0] = '\r';
+  blankLine[1] = '\n';
+  blankLine[2] = '\0';
+
+  for (i = 0; i < 25; i++) {
+    printString(blankLine);
+  }
+  interrupt(0x10, 0x200, 0, 0, 0);
+  interrupt(0x10, 0x4200, 0, 0, 0);
 }
 
 /* ----------Utilities --------------------------*/

@@ -10,7 +10,7 @@ shell.c
 - The shell.c file loops infinitely, using interrupts to print a shell prompt and accepts string input.
 - If the string input is a valid command (currently in the form of "type filename" or "execute filename") it makes an interrupt and performs the appropriate function on the file specified by "filename" in a new process.
 - We have added the following special features to our shell:
-  - you can change the background color of the terminal with "bgcolor" then a color (black, blue, cyan, red, purple, gray, lime, teal, orange); at startup you default to black. WARNING: SETTING COLOR TO GRAY IS NOT ADVISED SINCE THE TEXT IS GRAY
+  - you can change the background color of the terminal with "bgcolor" (or "bgc") then a color (black, blue, cyan, red, purple, gray, lime, teal, orange); at startup you default to black. WARNING: SETTING COLOR TO GRAY IS NOT ADVISED SINCE THE TEXT IS GRAY
   - you can clear the terminal screen by typing "clear"
   - you can enter "ps" to display the pids that are currently active
   - when you perform a "dir" (or "ls") the shell prints out the names of all programs in the directory as well as the amount of sectors they each take up with column labels
